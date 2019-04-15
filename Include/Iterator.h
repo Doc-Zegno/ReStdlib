@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ITERATOR_H
+#define ITERATOR_H
 
 #include "Any.h"
 
@@ -12,3 +13,5 @@ namespace ReLang {
     };
 }
 
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FUNCTION_H
+#define FUNCTION_H
 
 #include "Any.h"
 
@@ -10,3 +11,6 @@ namespace ReLang {
         virtual TResult __call__(TArgs... args) = 0;
     };
 }
+
+
+#endif

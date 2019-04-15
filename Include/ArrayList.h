@@ -1,28 +1,28 @@
-#pragma once
+#ifndef ARRAY_LIST_H
+#define ARRAY_LIST_H
 
 #include <vector>
 #include <initializer_list>
 
 #include "List.h"
+#include "Errors.h"
 
 
 namespace ReLang {
     template<typename T>
     class ArrayList : public List<T>, public EnableSelf<ArrayList<T>> {
     private:
-        class ArrayListIterator : public Iterator<T>/*, EnableSelf<ArrayListIterator>*/ {
+        class ArrayListIterator : public Iterator<T> {
         private:
             Ptr<ArrayList> _list;
-            std::vector<T>& _vector;
             Int _index;
+            Int _maximumIndex;
 
         public:
-            ArrayListIterator(Ptr<ArrayList> list, std::vector<T>& vector);
+            ArrayListIterator(Ptr<ArrayList> list);
 
             virtual T getCurrent() override;
             virtual bool moveNext() override;
-
-            //virtual Ptr<Any> getSelf() override;
         };
 
 
@@ -33,7 +33,10 @@ namespace ReLang {
 
         virtual Ptr<Iterator<T>> getIterator() override;
         virtual T __get__(Int index) override;
+        virtual Int getLength() override;
         virtual Ptr<Iterable<T>> getSelf() override;
+
+        T operator[](Int index);
     };
 
 
@@ -48,15 +51,20 @@ namespace ReLang {
     {
         return Ptr<Iterator<T>>(
             new ArrayListIterator(
-                std::dynamic_pointer_cast<ArrayList<T>>(getSelf()),
-                _vector));
+                this->shared_from_this()));
     }
 
 
     template<typename T>
     inline T ArrayList<T>::__get__(Int index)
     {
-        return _vector[index];
+        return (*this)[index];
+    }
+
+
+    template<typename T>
+    inline Int ArrayList<T>::getLength() {
+        return Int(_vector.size());
     }
 
 
@@ -67,16 +75,27 @@ namespace ReLang {
     }
 
 
+    template<typename T>
+    inline T ArrayList<T>::operator[](Int index) {
+        auto end = Int(_vector.size());
+        if (index >= 0 && index < end) {
+            return _vector[index];
+        } else {
+            throw IndexError(index, end);
+        }
+    }
+
+
 
     template<typename T>
-    inline ArrayList<T>::ArrayListIterator::ArrayListIterator(Ptr<ArrayList<T>> list, std::vector<T>& vector)
-        : _list(list), _vector(vector), _index(-1) { }
+    inline ArrayList<T>::ArrayListIterator::ArrayListIterator(Ptr<ArrayList<T>> list)
+        : _list(list), _index(-1), _maximumIndex(list->getLength()) { }
 
 
     template<typename T>
     inline T ArrayList<T>::ArrayListIterator::getCurrent()
     {
-        return _vector[_index];
+        return (*_list)[_index];
     }
 
 
@@ -84,20 +103,14 @@ namespace ReLang {
     inline bool ArrayList<T>::ArrayListIterator::moveNext()
     {
         _index++;
-        auto maxLength = Int(_vector.size());
-        if (_index >= maxLength) {
-            _index = maxLength;
+        if (_index >= _maximumIndex) {
+            _index = _maximumIndex;
             return false;
         } else {
             return true;
         }
     }
-
-
-    /*template<typename T>
-    inline Ptr<Any> ArrayList<T>::ArrayListIterator::getSelf()
-    {
-        return this->shared_from_this();
-    }*/
 }
 
+
+#endif

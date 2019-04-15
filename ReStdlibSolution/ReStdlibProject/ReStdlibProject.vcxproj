@@ -70,16 +70,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\..\Stdlib;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>..\..\Stdlib;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\..\Stdlib;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>..\..\Stdlib;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -126,18 +126,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Stdlib\Any.h" />
-    <ClInclude Include="..\..\Stdlib\ArrayList.h" />
-    <ClInclude Include="..\..\Stdlib\Function.h" />
-    <ClInclude Include="..\..\Stdlib\Iterable.h" />
-    <ClInclude Include="..\..\Stdlib\Iterator.h" />
-    <ClInclude Include="..\..\Stdlib\List.h" />
-    <ClInclude Include="..\..\Stdlib\Primitives.h" />
-    <ClInclude Include="..\..\Stdlib\Ptr.h" />
-    <ClInclude Include="..\..\Stdlib\SelfReferencing.h" />
+    <ClCompile Include="..\..\Source\Any.cpp" />
+    <ClCompile Include="..\..\Source\Error.cpp" />
+    <ClCompile Include="..\..\Source\Errors.cpp" />
+    <ClCompile Include="..\..\Source\BasicString.cpp" />
+    <ClCompile Include="..\..\Source\Utils\StringUtils.cpp" />
+    <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp" />
+    <ClInclude Include="..\..\Include\Any.h" />
+    <ClInclude Include="..\..\Include\ArrayList.h" />
+    <ClInclude Include="..\..\Include\Error.h" />
+    <ClInclude Include="..\..\Include\Errors.h" />
+    <ClInclude Include="..\..\Include\Function.h" />
+    <ClInclude Include="..\..\Include\Iterable.h" />
+    <ClInclude Include="..\..\Include\Iterator.h" />
+    <ClInclude Include="..\..\Include\List.h" />
+    <ClInclude Include="..\..\Include\Primitives.h" />
+    <ClInclude Include="..\..\Include\Ptr.h" />
+    <ClInclude Include="..\..\Include\SelfReferencing.h" />
+    <ClInclude Include="..\..\Include\BasicString.h" />
+    <ClInclude Include="..\..\Include\Utils\StringUtils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

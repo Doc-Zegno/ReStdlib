@@ -13,38 +13,74 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Файлы заголовков\Utils">
+      <UniqueIdentifier>{9a768613-36c7-44f2-b599-07f39fe8ba8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Sample">
+      <UniqueIdentifier>{4eb9f1ab-2301-42c5-af23-df306bfe0295}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Utils">
+      <UniqueIdentifier>{9f3f9ce2-1d61-447f-9af3-9b58f554da1a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Stdlib\Any.h">
+    <ClInclude Include="..\..\Include\Any.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Stdlib\ArrayList.h">
+    <ClInclude Include="..\..\Include\ArrayList.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Stdlib\Function.h">
+    <ClInclude Include="..\..\Include\Error.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Stdlib\Iterable.h">
+    <ClInclude Include="..\..\Include\Errors.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Stdlib\Iterator.h">
+    <ClInclude Include="..\..\Include\Function.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Stdlib\List.h">
+    <ClInclude Include="..\..\Include\Iterable.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Stdlib\Primitives.h">
+    <ClInclude Include="..\..\Include\Iterator.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Stdlib\Ptr.h">
+    <ClInclude Include="..\..\Include\List.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Stdlib\SelfReferencing.h">
+    <ClInclude Include="..\..\Include\Primitives.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\Ptr.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\SelfReferencing.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\Utils\StringUtils.h">
+      <Filter>Файлы заголовков\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\BasicString.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
+      <Filter>Исходные файлы\Sample</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Utils\StringUtils.cpp">
+      <Filter>Исходные файлы\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Errors.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Error.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Any.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\BasicString.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>

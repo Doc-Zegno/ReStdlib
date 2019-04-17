@@ -1,5 +1,4 @@
-#ifndef STRING_UTILS_H
-#define STRING_UTILS_H
+#pragma once
 
 #include <string>
 #include <iostream>
@@ -22,7 +21,8 @@ namespace ReLang {
 
         template<typename T>
         Ptr<String> join(const Char* separator, Ptr<Iterable<T>> items, const Char* prefix = L"", const Char* suffix = L"") {
-            auto builder = std::wostringstream(prefix);
+            auto builder = std::wostringstream();
+            builder << prefix;
             auto iterator = items->getIterator();
             auto isFirst = true;
             while (iterator->moveNext()) {
@@ -143,6 +143,3 @@ namespace ReLang {
         }*/
     }
 }
-
-
-#endif

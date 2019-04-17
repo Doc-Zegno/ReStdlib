@@ -1,5 +1,4 @@
-#ifndef ERROR_H
-#define ERROR_H
+#pragma once
 
 #include "Any.h"
 
@@ -17,6 +16,3 @@ namespace ReLang {
         virtual Ptr<String> toString() override;
     };
 }
-
-
-#endif

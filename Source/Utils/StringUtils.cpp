@@ -11,7 +11,8 @@ namespace ReLang {
 
 
         Ptr<String> join(const Char* separator, Ptr<Iterable<Ptr<Any>>> items, const Char* prefix, const Char* suffix) {
-            auto builder = std::wostringstream(prefix);
+            auto builder = std::wostringstream();
+            builder << prefix;
             auto iterator = items->getIterator();
             auto isFirst = true;
             while (iterator->moveNext()) {

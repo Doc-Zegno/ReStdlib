@@ -1,5 +1,4 @@
-#ifndef FUNCTION_H
-#define FUNCTION_H
+#pragma once
 
 #include "Any.h"
 
@@ -8,9 +7,6 @@ namespace ReLang {
     template<typename TResult, typename... TArgs>
     class Function : public Any {
     public:
-        virtual TResult __call__(TArgs... args) = 0;
+        virtual TResult operator()(TArgs... args) = 0;
     };
 }
-
-
-#endif

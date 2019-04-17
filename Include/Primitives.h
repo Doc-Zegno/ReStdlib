@@ -1,5 +1,4 @@
-#ifndef PRIMITIVES_H
-#define PRIMITIVES_H
+#pragma once
 
 
 namespace ReLang {
@@ -7,6 +6,3 @@ namespace ReLang {
     using Bool = bool;
     using Char = wchar_t;
 }
-
-
-#endif

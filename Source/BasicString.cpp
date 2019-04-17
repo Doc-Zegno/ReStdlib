@@ -13,10 +13,14 @@ namespace ReLang {
         Int _end;
 
     public:
-        StringIterator(Ptr<String> string) : _string(string), _index(-1), _end(Int(string->getLength())) {}
+        StringIterator(Ptr<String> string, int index = -1) : _string(string), _index(index), _end(Int(string->getLength())) {}
 
         virtual Char getCurrent() override {
-            return (*_string)[_index];
+            if (_index >= 0 && _index < _end) {
+                return (*_string)[_index];
+            } else {
+                throw InvalidIteratorError();
+            }
         }
 
         virtual bool moveNext() override {
@@ -27,6 +31,10 @@ namespace ReLang {
             } else {
                 return true;
             }
+        }
+
+        virtual Ptr<Iterator<Char>> clone() override {
+            return Ptr<Iterator<Char>>(new StringIterator(_string, _index));
         }
     };
 
@@ -89,8 +97,8 @@ namespace ReLang {
     }
 
 
-    Char String::__get__(Int index) {
-        return this->operator[](index);
+    Char String::get(Int index) {
+        return (*this)[index];
     }
 
 

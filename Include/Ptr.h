@@ -1,5 +1,4 @@
-#ifndef PTR_H
-#define PTR_H
+#pragma once
 
 #include <memory>
 
@@ -11,6 +10,3 @@ namespace ReLang {
     template<typename T>
     using WeakPtr = std::shared_ptr<T>;
 }
-
-
-#endif

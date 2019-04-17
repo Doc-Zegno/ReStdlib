@@ -63,6 +63,12 @@
     <ClInclude Include="..\..\Include\BasicString.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Include\Cloneable.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\Utils\IterableUtils.h">
+      <Filter>Файлы заголовков\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">

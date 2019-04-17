@@ -1,5 +1,4 @@
-#ifndef BASIC_STRING_H
-#define BASIC_STRING_H
+#pragma once
 
 #include <string>
 #include <iostream>
@@ -35,7 +34,7 @@ namespace ReLang {
 
         virtual Bool getHasLength() override;
 
-        virtual Char __get__(Int index) override;
+        virtual Char get(Int index) override;
 
         virtual Ptr<String> toString() override;
 
@@ -47,6 +46,3 @@ namespace ReLang {
 
     std::wostream& operator<<(std::wostream& out, Ptr<String> string);
 }
-
-
-#endif

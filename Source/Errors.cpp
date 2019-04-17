@@ -9,6 +9,18 @@ namespace ReLang {
     }
 
 
-    NotImplementedError::NotImplementedError(Ptr<String> message) : Error(message) {
+    NotImplementedError::NotImplementedError(Ptr<String> message) 
+        : Error(message ? message : Ptr<String>(new String(L"This method is not implemented")))
+    {
+    }
+
+
+    InvalidIteratorError::InvalidIteratorError(Ptr<String> message)
+        : Error(message ? message : Ptr<String>(new String(L"Trying to access element with invalid iterator")))
+    {
+    }
+
+
+    EmptyIterableError::EmptyIterableError() : Error(Ptr<String>(new String(L"This iterable is empty"))) {
     }
 }

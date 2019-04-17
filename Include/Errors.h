@@ -1,5 +1,4 @@
-#ifndef ERRORS_H
-#define ERRORS_H
+#pragma once
 
 #include "Error.h"
 #include "Primitives.h"
@@ -14,9 +13,18 @@ namespace ReLang {
 
     class NotImplementedError : public Error {
     public:
-        NotImplementedError(Ptr<String> message);
+        NotImplementedError(Ptr<String> message = Ptr<String>());
+    };
+
+
+    class InvalidIteratorError : public Error {
+    public:
+        InvalidIteratorError(Ptr<String> message = Ptr<String>());
+    };
+
+
+    class EmptyIterableError : public Error {
+    public:
+        EmptyIterableError();
     };
 }
-
-
-#endif

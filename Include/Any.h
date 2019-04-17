@@ -1,5 +1,4 @@
-#ifndef ANY_H
-#define ANY_H
+#pragma once
 
 #include "Ptr.h"
 
@@ -14,6 +13,3 @@ namespace ReLang {
         virtual ~Any() { }
     };
 }
-
-
-#endif

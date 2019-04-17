@@ -1,5 +1,4 @@
-#ifndef ARRAY_LIST_H
-#define ARRAY_LIST_H
+#pragma once
 
 #include <vector>
 #include <initializer_list>
@@ -19,10 +18,11 @@ namespace ReLang {
             Int _maximumIndex;
 
         public:
-            ArrayListIterator(Ptr<ArrayList> list);
+            ArrayListIterator(Ptr<ArrayList> list, int index = -1);
 
             virtual T getCurrent() override;
             virtual bool moveNext() override;
+            virtual Ptr<Iterator<T>> clone() override;
         };
 
 
@@ -32,8 +32,10 @@ namespace ReLang {
         ArrayList(std::initializer_list<T> list);
 
         virtual Ptr<Iterator<T>> getIterator() override;
-        virtual T __get__(Int index) override;
+        virtual T get(Int index) override;
         virtual Int getLength() override;
+        virtual Bool getHasLength() override;
+        virtual Bool getIsEmpty() override;
         virtual Ptr<Iterable<T>> getSelf() override;
 
         T operator[](Int index);
@@ -56,7 +58,7 @@ namespace ReLang {
 
 
     template<typename T>
-    inline T ArrayList<T>::__get__(Int index)
+    inline T ArrayList<T>::get(Int index)
     {
         return (*this)[index];
     }
@@ -65,6 +67,18 @@ namespace ReLang {
     template<typename T>
     inline Int ArrayList<T>::getLength() {
         return Int(_vector.size());
+    }
+
+
+    template<typename T>
+    inline Bool ArrayList<T>::getHasLength() {
+        return true;
+    }
+
+
+    template<typename T>
+    inline Bool ArrayList<T>::getIsEmpty() {
+        return _vector.empty();
     }
 
 
@@ -88,14 +102,18 @@ namespace ReLang {
 
 
     template<typename T>
-    inline ArrayList<T>::ArrayListIterator::ArrayListIterator(Ptr<ArrayList<T>> list)
-        : _list(list), _index(-1), _maximumIndex(list->getLength()) { }
+    inline ArrayList<T>::ArrayListIterator::ArrayListIterator(Ptr<ArrayList<T>> list, int index)
+        : _list(list), _index(index), _maximumIndex(list->getLength()) { }
 
 
     template<typename T>
     inline T ArrayList<T>::ArrayListIterator::getCurrent()
     {
-        return (*_list)[_index];
+        if (_index >= 0 && _index < _maximumIndex) {
+            return (*_list)[_index];
+        } else {
+            throw InvalidIteratorError();
+        }
     }
 
 
@@ -110,7 +128,10 @@ namespace ReLang {
             return true;
         }
     }
+
+
+    template<typename T>
+    inline Ptr<Iterator<T>> ArrayList<T>::ArrayListIterator::clone() {
+        return Ptr<Iterator<T>>(new ArrayListIterator(_list, _index));
+    }
 }
-
-
-#endif

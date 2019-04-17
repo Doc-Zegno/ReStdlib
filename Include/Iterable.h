@@ -1,5 +1,4 @@
-#ifndef ITERABLE_H
-#define ITERABLE_H
+#pragma once
 
 #include <vector>
 #include <type_traits>
@@ -8,6 +7,7 @@
 #include "Function.h"
 #include "Primitives.h"
 #include "SelfReferencing.h"
+#include "Errors.h"
 
 
 namespace ReLang {
@@ -33,8 +33,6 @@ namespace ReLang {
         virtual Ptr<Iterable<T>> filter(Ptr<Function<Bool, T>> predicate);
 
         virtual Ptr<String> toString() override;
-
-        //virtual ~IterableCommon() { }
     };
 
 
@@ -60,6 +58,7 @@ namespace ReLang {
 
                 virtual R getCurrent() override;
                 virtual bool moveNext() override;
+                virtual Ptr<Iterator<R>> clone() override;
             };
 
 
@@ -88,6 +87,7 @@ namespace ReLang {
 
                 virtual T getCurrent() override;
                 virtual bool moveNext() override;
+                virtual Ptr<Iterator<T>> clone() override;
             };
 
 
@@ -96,6 +96,20 @@ namespace ReLang {
 
         public:
             FilterIterable(Ptr<Iterable<T>> iterable, Ptr<Function<Bool, T>> predicate);
+
+            virtual Ptr<Iterator<T>> getIterator() override;
+            virtual Ptr<Iterable<T>> getSelf() override;
+        };
+
+
+
+        template<typename T>
+        class WrappingIterable : public Iterable<T>, public EnableSelf<WrappingIterable<T>> {
+        private:
+            Ptr<Iterator<T>> _iterator;
+
+        public:
+            WrappingIterable(Ptr<Iterator<T>> iterator);
 
             virtual Ptr<Iterator<T>> getIterator() override;
             virtual Ptr<Iterable<T>> getSelf() override;
@@ -130,13 +144,19 @@ namespace ReLang {
 
         template<typename R, typename T>
         inline R MapIterable<R, T>::MapIterator::getCurrent() {
-            return _mapping->__call__(_iterator->getCurrent());
+            return _mapping->operator()(_iterator->getCurrent());
         }
 
 
         template<typename R, typename T>
         inline bool MapIterable<R, T>::MapIterator::moveNext() {
             return _iterator->moveNext();
+        }
+
+
+        template<typename R, typename T>
+        inline Ptr<Iterator<R>> MapIterable<R, T>::MapIterator::clone() {
+            return Ptr<Iterator<R>>(new MapIterator(_iterator->clone(), _mapping));
         }
 
 
@@ -157,13 +177,19 @@ namespace ReLang {
         inline bool FilterIterable<T>::FilterIterator::moveNext() {
             while (true) {
                 if (_iterator->moveNext()) {
-                    if (_predicate->__call__(_iterator->getCurrent())) {
+                    if (_predicate->operator()(_iterator->getCurrent())) {
                         return true;
                     }
                 } else {
                     return false;
                 }
             }
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterator<T>> FilterIterable<T>::FilterIterator::clone() {
+            return Ptr<Iterator<T>>(new FilterIterator(_iterator->clone(), _predicate));
         }
 
 
@@ -183,6 +209,24 @@ namespace ReLang {
 
         template<typename T>
         inline Ptr<Iterable<T>> FilterIterable<T>::getSelf() {
+            return this->shared_from_this();
+        }
+
+
+
+        template<typename T>
+        inline WrappingIterable<T>::WrappingIterable(Ptr<Iterator<T>> iterator) : _iterator(iterator) {
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterator<T>> WrappingIterable<T>::getIterator() {
+            return _iterator->clone();
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterable<T>> WrappingIterable<T>::getSelf() {
             return this->shared_from_this();
         }
     }
@@ -206,22 +250,39 @@ namespace ReLang {
 
     template<typename T>
     inline T IterableCommon<T>::getFirst() {
-        // TODO: implement
-        return T();
+        auto iterator = getIterator();
+        if (iterator->moveNext()) {
+            return iterator->getCurrent();
+        } else {
+            throw EmptyIterableError();
+        }
     }
 
 
     template<typename T>
     inline T IterableCommon<T>::getLast() {
-        // TODO: implement
-        return T();
+        auto iterator = getIterator();
+        if (iterator->moveNext()) {
+            while (true) {
+                auto current = iterator->getCurrent();
+                if (!iterator->moveNext()) {
+                    return current;
+                }
+            }
+        } else {
+            throw EmptyIterableError();
+        }
     }
 
 
     template<typename T>
     inline Ptr<Iterable<T>> IterableCommon<T>::getRest() {
-        // TODO: added implementation for iterable from iterator (.copy())
-        return Ptr<Iterable<T>>();
+        auto iterator = getIterator();
+        if (iterator->moveNext()) {
+            return Ptr<Iterable<T>>(new Iterables::WrappingIterable<T>(iterator));
+        } else {
+            throw EmptyIterableError();
+        }
     }
 
 
@@ -234,7 +295,7 @@ namespace ReLang {
 
     template<typename T>
     inline Int IterableCommon<T>::getLength() {
-        return Int();
+        throw NotImplementedError();
     }
 
 
@@ -256,6 +317,3 @@ namespace ReLang {
         return Utils::join(L"::", this->getSelf(), L"", L"::[]");
     }
 }
-
-
-#endif

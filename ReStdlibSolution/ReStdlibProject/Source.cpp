@@ -24,6 +24,22 @@ public:
 };
 
 
+class PrintIntAction : public Function<Void, Int> {
+public:
+    virtual Void operator()(Int x) override {
+        std::wcout << x << std::endl;
+    }
+};
+
+
+class SumTwoIntsReducer : public Function<Int, Int, Int> {
+public:
+    virtual Int operator()(Int x, Int y) override {
+        return x + y;
+    }
+};
+
+
 void printIterable(Ptr<Iterable<Int>> iterable) {
     std::wcout << iterable->toString() << std::endl;
 }
@@ -57,8 +73,15 @@ int main() {
     printIterable(rest);
 
     printIterable(list);
+    std::wcout << "Take 3: ";
+    printIterable(list->take(3));
+    std::wcout << "Skip 2: ";
+    printIterable(list->skip(2));
     printIterable(list->map(Ptr<Function<Int, Int>>(new SquareFunction())));
     printIterable(list->filter(Ptr<Function<Bool, Int>>(new IsOddFunction())));
+    std::wcout << "For each:\n";
+    list->forEach(Ptr<Function<Void, Int>>(new PrintIntAction()));
+    std::wcout << "Sum: " << list->reduce(Ptr<Function<Int, Int, Int>>(new SumTwoIntsReducer())) << std::endl;
 
     try {
         std::wcout << list->get(5);

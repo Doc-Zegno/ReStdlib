@@ -32,6 +32,14 @@ namespace ReLang {
 
         virtual Ptr<Iterable<T>> filter(Ptr<Function<Bool, T>> predicate);
 
+        virtual void forEach(Ptr<Function<Void, T>> action);
+
+        virtual T reduce(Ptr<Function<T, T, T>> reducer);
+
+        virtual Ptr<Iterable<T>> take(Int number);
+
+        virtual Ptr<Iterable<T>> skip(Int number);
+
         virtual Ptr<String> toString() override;
     };
 
@@ -110,6 +118,36 @@ namespace ReLang {
 
         public:
             WrappingIterable(Ptr<Iterator<T>> iterator);
+
+            virtual Ptr<Iterator<T>> getIterator() override;
+            virtual Ptr<Iterable<T>> getSelf() override;
+        };
+
+
+
+        template<typename T>
+        class TakingIterable : public Iterable<T>, public EnableSelf<TakingIterable<T>> {
+        private:
+            class TakingIterator : public Iterator<T> {
+            private:
+                Ptr<Iterator<T>> _iterator;
+                Int _number;
+                Int _index;
+
+            public:
+                TakingIterator(Ptr<Iterator<T>> iterator, Int number, Int index = -1);
+
+                virtual T getCurrent() override;
+                virtual Bool moveNext() override;
+                virtual Ptr<Iterator<T>> clone() override;
+            };
+
+
+            Ptr<Iterable<T>> _iterable;
+            Int _number;
+
+        public:
+            TakingIterable(Ptr<Iterable<T>> iterable, Int number);
 
             virtual Ptr<Iterator<T>> getIterator() override;
             virtual Ptr<Iterable<T>> getSelf() override;
@@ -229,6 +267,60 @@ namespace ReLang {
         inline Ptr<Iterable<T>> WrappingIterable<T>::getSelf() {
             return this->shared_from_this();
         }
+
+
+
+        template<typename T>
+        inline TakingIterable<T>::TakingIterable(Ptr<Iterable<T>> iterable, Int number) : _iterable(iterable), _number(number) {
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterator<T>> TakingIterable<T>::getIterator() {
+            return Ptr<Iterator<T>>(new TakingIterator(_iterable->getIterator(), _number));
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterable<T>> TakingIterable<T>::getSelf() {
+            return this->shared_from_this();
+        }
+
+
+
+        template<typename T>
+        inline TakingIterable<T>::TakingIterator::TakingIterator(Ptr<Iterator<T>> iterator, Int number, Int index)
+            : _iterator(iterator), _number(number), _index(index)
+        {
+        }
+
+
+        template<typename T>
+        inline T TakingIterable<T>::TakingIterator::getCurrent() {
+            if (_index >= 0 && _index < _number) {
+                return _iterator->getCurrent();
+            } else {
+                throw InvalidIteratorError();
+            }
+        }
+
+
+        template<typename T>
+        inline Bool TakingIterable<T>::TakingIterator::moveNext() {
+            _index++;
+            if (_index < _number) {
+                return _iterator->moveNext();
+            } else {
+                _index = _number;
+                return false;
+            }
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterator<T>> TakingIterable<T>::TakingIterator::clone() {
+            return Ptr<Iterator<T>>(new TakingIterator(_iterator->clone(), _number, _index));
+        }
     }
 
 
@@ -245,6 +337,45 @@ namespace ReLang {
     inline Ptr<Iterable<T>> IterableCommon<T>::filter(Ptr<Function<Bool, T>> predicate) {
         return Ptr<Iterable<T>>(
             new Iterables::FilterIterable<T>(this->getSelf(), predicate));
+    }
+
+
+    template<typename T>
+    inline void IterableCommon<T>::forEach(Ptr<Function<Void, T>> action) {
+        auto iterator = getIterator();
+        while (iterator->moveNext()) {
+            (*action)(iterator->getCurrent());
+        }
+    }
+
+
+    template<typename T>
+    inline T IterableCommon<T>::reduce(Ptr<Function<T, T, T>> reducer) {
+        auto iterator = getIterator();
+        if (iterator->moveNext()) {
+            auto accumulator = iterator->getCurrent();
+            while (iterator->moveNext()) {
+                accumulator = (*reducer)(accumulator, iterator->getCurrent());
+            }
+            return accumulator;
+        } else {
+            throw EmptyIterableError();
+        }
+    }
+
+
+    template<typename T>
+    inline Ptr<Iterable<T>> IterableCommon<T>::take(Int number) {
+        return Ptr<Iterable<T>>(new Iterables::TakingIterable<T>(this->getSelf(), number));
+    }
+
+
+    template<typename T>
+    inline Ptr<Iterable<T>> IterableCommon<T>::skip(Int number) {
+        auto iterator = getIterator();
+        for (auto i = 0; i < number && iterator->moveNext(); i++) {
+        }
+        return Ptr<Iterable<T>>(new Iterables::WrappingIterable<T>(iterator));
     }
 
 

@@ -69,6 +69,9 @@
     <ClInclude Include="..\..\Include\Utils\IterableUtils.h">
       <Filter>Файлы заголовков\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Include\Print.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -88,6 +91,12 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\BasicString.cpp">
       <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Print.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Utils\IterableUtils.cpp">
+      <Filter>Исходные файлы\Utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -65,7 +65,7 @@ namespace ReLang {
                 MapIterator(Ptr<Iterator<T>> iterator, Ptr<Function<R, T>> mapping);
 
                 virtual R getCurrent() override;
-                virtual bool moveNext() override;
+                virtual Bool moveNext() override;
                 virtual Ptr<Iterator<R>> clone() override;
             };
 
@@ -94,7 +94,7 @@ namespace ReLang {
                 FilterIterator(Ptr<Iterator<T>> iterator, Ptr<Function<Bool, T>> predicate);
 
                 virtual T getCurrent() override;
-                virtual bool moveNext() override;
+                virtual Bool moveNext() override;
                 virtual Ptr<Iterator<T>> clone() override;
             };
 
@@ -187,7 +187,7 @@ namespace ReLang {
 
 
         template<typename R, typename T>
-        inline bool MapIterable<R, T>::MapIterator::moveNext() {
+        inline Bool MapIterable<R, T>::MapIterator::moveNext() {
             return _iterator->moveNext();
         }
 
@@ -212,7 +212,7 @@ namespace ReLang {
 
 
         template<typename T>
-        inline bool FilterIterable<T>::FilterIterator::moveNext() {
+        inline Bool FilterIterable<T>::FilterIterator::moveNext() {
             while (true) {
                 if (_iterator->moveNext()) {
                     if (_predicate->operator()(_iterator->getCurrent())) {

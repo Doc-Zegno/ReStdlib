@@ -12,9 +12,6 @@
 
 
 namespace ReLang {
-    class String;
-
-
     namespace Utils {
         Ptr<String> makeStringFromBuilder(const std::wostringstream& builder);
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Cloneable.h"
+#include "Primitives.h"
 
 
 namespace ReLang {
@@ -8,6 +9,6 @@ namespace ReLang {
     class Iterator : public Cloneable<Iterator<T>> {
     public:
         virtual T getCurrent() = 0;
-        virtual bool moveNext() = 0;
+        virtual Bool moveNext() = 0;
     };
 }

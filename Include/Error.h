@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Any.h"
+#include "Primitives.h"
 
 
 namespace ReLang {
@@ -9,6 +10,7 @@ namespace ReLang {
         Ptr<String> _message;
 
     public:
+        Error(const Char* message);
         Error(Ptr<String> message);
 
         virtual Ptr<String> getMessage();

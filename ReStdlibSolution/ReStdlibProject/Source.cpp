@@ -4,6 +4,7 @@
 #include "Errors.h"
 #include "ArrayList.h"
 #include "BasicString.h"
+#include "Print.h"
 
 using namespace ReLang;
 
@@ -27,7 +28,7 @@ public:
 class PrintIntAction : public Function<Void, Int> {
 public:
     virtual Void operator()(Int x) override {
-        std::wcout << x << std::endl;
+        print(x);
     }
 };
 
@@ -40,53 +41,52 @@ public:
 };
 
 
-void printIterable(Ptr<Iterable<Int>> iterable) {
-    std::wcout << iterable->toString() << std::endl;
-}
-
-
-void printIterable(Ptr<Iterable<Ptr<String>>> iterable) {
-    std::wcout << iterable->toString() << std::endl;
-}
-
-
 int main() {
-    auto list = Ptr<List<Int>>(new ArrayList<Int>({ 1, 2, 3, 4, 5 }));
+    auto list = Ptr<List<Int>>(new ArrayList<Int>({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }));
     auto strings = Ptr<List<Ptr<String>>>(
         new ArrayList<Ptr<String>>(
             { 
                 Ptr<String>(new String(L"Hello, World!")), 
+                Ptr<String>(),
                 Ptr<String>(new String(L"Sample Text")), 
                 Ptr<String>(new String(L"Serious Arguments")) 
             }));
 
-    printIterable(strings);
     std::wcout << std::boolalpha;
-    std::wcout << L"Has length: " << strings->getHasLength() << std::endl;
-    std::wcout << L"Lenght: " << strings->getLength() << std::endl;
-    std::wcout << L"First: " << strings->getFirst() << std::endl;
-    std::wcout << L"Last: " << strings->getLast() << std::endl;
+    print(Ptr<Any>());
+    print(strings);
+    printAll(L"Has length:", strings->getHasLength());
+    printAll(L"Lenght:", strings->getLength());
+    printAll(L"First:", strings->getFirst());
+    printAll(L"Last:", strings->getLast());
     auto rest = strings->getRest();
-    std::wcout << L"Rest: ";
-    printIterable(rest);
-    std::wcout << L"Rest once again: ";
-    printIterable(rest);
+    printAll(L"Rest:", rest);
+    printAll(L"Rest once again:", rest);
 
-    printIterable(list);
-    std::wcout << "Take 3: ";
-    printIterable(list->take(3));
-    std::wcout << "Skip 2: ";
-    printIterable(list->skip(2));
-    printIterable(list->map(Ptr<Function<Int, Int>>(new SquareFunction())));
-    printIterable(list->filter(Ptr<Function<Bool, Int>>(new IsOddFunction())));
-    std::wcout << "For each:\n";
+    print(list);
+    printAll(L"Take 3:", list->take(3));
+    printAll(L"Skip 2:", list->skip(2));
+    print(list->map(Ptr<Function<Int, Int>>(new SquareFunction())));
+    print(list->filter(Ptr<Function<Bool, Int>>(new IsOddFunction())));
+    print(L"For each:");
     list->forEach(Ptr<Function<Void, Int>>(new PrintIntAction()));
-    std::wcout << "Sum: " << list->reduce(Ptr<Function<Int, Int, Int>>(new SumTwoIntsReducer())) << std::endl;
+    printAll(L"Sum:", list->reduce(Ptr<Function<Int, Int, Int>>(new SumTwoIntsReducer())));
 
     try {
-        std::wcout << list->get(5);
+        printAll(L"List[1] =", list->get(1));
+        printAll(L"List[-1] =", list->get(-1));
+        auto slice = list->getSlice(1, 10, 2);
+        printAll(L"Slice =", slice);
+        printAll(L"Slice.length =", slice->getLength());
+        printAll(L"Slice[0] =", slice->get(0));
+        printAll(L"Slice[-1] =", slice->get(-1));
+        auto nestedSlice = slice->getSlice(0, 5, 2);
+        printAll(L"Nested slice =", nestedSlice);
+        printAll(L"Nested slice[1] =", nestedSlice->get(1));
+        printAll(L"Nested slice[-2] =", nestedSlice->get(-2));
+        print(list->get(10));
     } catch (IndexError& e) {
-        std::wcout << e.getMessage() << std::endl;
+        print(e.getMessage());
     }
 
     auto ch = _getch();

@@ -9,6 +9,7 @@ namespace ReLang {
     class List : public Iterable<T> {
     public:
         virtual T get(Int index) = 0;
+        virtual Ptr<List<T>> getSlice(Int start, Int end, Int step) = 0;
 
         virtual Ptr<String> toString() override;
     };

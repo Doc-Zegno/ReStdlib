@@ -16,13 +16,17 @@ namespace ReLang {
             auto iterator = items->getIterator();
             auto isFirst = true;
             while (iterator->moveNext()) {
-                auto current = iterator->getCurrent();
-                auto representation = current->toString();
-                auto raw = representation->getRaw();
                 if (!isFirst) {
                     builder << separator;
                 }
-                builder << raw;
+                auto current = iterator->getCurrent();
+                if (current) {
+                    auto representation = current->toString();
+                    auto& raw = representation->getRaw();
+                    builder << raw;
+                } else {
+                    builder << L"null";
+                }
                 isFirst = false;
             }
             builder << suffix;

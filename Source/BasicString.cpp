@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include "Errors.h"
+#include "Utils/IterableUtils.h"
 
 
 namespace ReLang {
@@ -101,6 +102,11 @@ namespace ReLang {
         return (*this)[index];
     }
 
+    Ptr<List<Char>> String::getSlice(Int start, Int end, Int step) {
+        // TODO: implement
+        return Ptr<List<Char>>();
+    }
+
 
     Ptr<String> String::toString() {
         return this->shared_from_this();
@@ -109,11 +115,8 @@ namespace ReLang {
 
     Char String::operator[](Int index) {
         auto end = Int(_raw.size());
-        if (index >= 0 && index < end) {
-            return _raw[index];
-        } else {
-            throw IndexError(index, end);
-        }
+        auto translatedIndex = Utils::translateIndex(index, end);
+        return _raw[translatedIndex];
     }
 
 

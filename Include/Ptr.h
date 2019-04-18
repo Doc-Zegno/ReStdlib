@@ -9,4 +9,9 @@ namespace ReLang {
 
     template<typename T>
     using WeakPtr = std::shared_ptr<T>;
+
+    template<typename TObject, typename ...TArgs>
+    inline Ptr<TObject> makePtr(TArgs&& ...args) {
+        return Ptr<TObject>(new TObject(std::move(args)...));
+    }
 }

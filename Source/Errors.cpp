@@ -28,6 +28,18 @@ namespace ReLang {
     }
 
 
+    NotSupportedError::NotSupportedError(const Char * message)
+        : Error(message ? makePtr<String>(message) : makePtr<String>(L"This method is not supported"))
+    {
+    }
+
+
+    NotSupportedError::NotSupportedError(Ptr<String> message)
+        : Error(message ? message : makePtr<String>(L"This method is not supported"))
+    {
+    }
+
+
     InvalidIteratorError::InvalidIteratorError(const Char* message)
         : Error(message ? makePtr<String>(message) : makePtr<String>(L"Trying to access element with invalid iterator"))
     {

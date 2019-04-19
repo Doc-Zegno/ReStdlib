@@ -3,6 +3,7 @@
 #include <vector>
 #include <type_traits>
 
+#include "Tuple.h"
 #include "Iterator.h"
 #include "Function.h"
 #include "Primitives.h"
@@ -27,10 +28,14 @@ namespace ReLang {
         virtual Int getLength();
         virtual Bool getHasLength();
 
+        template<Int dummy = 0>
+        Ptr<Iterable<Tuple<Int, T>>> enumerate();
+
         template<typename R>
         Ptr<Iterable<R>> map(Ptr<Function<R, T>> mapping);
 
-        virtual Ptr<Iterable<T>> filter(Ptr<Function<Bool, T>> predicate);
+        template<Int dummy = 0>
+        Ptr<Iterable<T>> filter(Ptr<Function<Bool, T>> predicate);
 
         virtual void forEach(Ptr<Function<Void, T>> action);
 
@@ -155,6 +160,35 @@ namespace ReLang {
 
 
 
+        template<typename T>
+        class EnumeratingIterable : public Iterable<Tuple<Int, T>>, public EnableSelf<EnumeratingIterable<T>> {
+        private:
+            class EnumeratingIterator : public Iterator<Tuple<Int, T>> {
+            private:
+                Ptr<Iterator<T>> _iterator;
+                Int _index;
+
+            public:
+                EnumeratingIterator(Ptr<Iterator<T>> iterator, Int index = -1);
+
+                virtual Tuple<Int, T> getCurrent() override;
+                virtual Bool moveNext() override;
+                virtual Ptr<Iterator<Tuple<Int, T>>> clone() override;
+            };
+
+
+            Ptr<Iterable<T>> _iterable;
+
+        public:
+            EnumeratingIterable(Ptr<Iterable<T>> iterable);
+
+            virtual Ptr<Iterator<Tuple<Int, T>>> getIterator() override;
+            virtual Ptr<Iterable<Tuple<Int, T>>> getSelf() override;
+        };
+
+
+
+        // M a p I t e r a b l e
         template<typename R, typename T>
         inline MapIterable<R, T>::MapIterable(Ptr<Iterable<T>> iterable, Ptr<Function<R, T>> mapping)
             : _iterable(iterable), _mapping(mapping) {
@@ -174,6 +208,7 @@ namespace ReLang {
 
 
 
+        // M a p I t e r a t o r
         template<typename R, typename T>
         inline MapIterable<R, T>::MapIterator::MapIterator(Ptr<Iterator<T>> iterator, Ptr<Function<R, T>> mapping)
             : _iterator(iterator), _mapping(mapping) {
@@ -199,6 +234,7 @@ namespace ReLang {
 
 
 
+        // F i l t e r I t e r a t o r
         template<typename T>
         inline FilterIterable<T>::FilterIterator::FilterIterator(Ptr<Iterator<T>> iterator, Ptr<Function<Bool, T>> predicate)
             : _iterator(iterator), _predicate(predicate) {
@@ -232,6 +268,7 @@ namespace ReLang {
 
 
 
+        // F i l t e r I t e r a b l e
         template<typename T>
         inline FilterIterable<T>::FilterIterable(Ptr<Iterable<T>> iterable, Ptr<Function<Bool, T>> predicate)
             : _iterable(iterable), _predicate(predicate) {
@@ -252,6 +289,7 @@ namespace ReLang {
 
 
 
+        // W r a p p i n g I t e r a b l e
         template<typename T>
         inline WrappingIterable<T>::WrappingIterable(Ptr<Iterator<T>> iterator) : _iterator(iterator) {
         }
@@ -270,6 +308,7 @@ namespace ReLang {
 
 
 
+        // T a k i n g I t e r a b l e
         template<typename T>
         inline TakingIterable<T>::TakingIterable(Ptr<Iterable<T>> iterable, Int number) : _iterable(iterable), _number(number) {
         }
@@ -288,6 +327,7 @@ namespace ReLang {
 
 
 
+        // T a k i n g I t e r a t o r
         template<typename T>
         inline TakingIterable<T>::TakingIterator::TakingIterator(Ptr<Iterator<T>> iterator, Int number, Int index)
             : _iterator(iterator), _number(number), _index(index)
@@ -321,8 +361,67 @@ namespace ReLang {
         inline Ptr<Iterator<T>> TakingIterable<T>::TakingIterator::clone() {
             return Ptr<Iterator<T>>(new TakingIterator(_iterator->clone(), _number, _index));
         }
+
+
+
+        // E n u m e r a t i n g I t e r a b l e
+        template<typename T>
+        inline EnumeratingIterable<T>::EnumeratingIterable(Ptr<Iterable<T>> iterable) : _iterable(iterable) {
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterator<Tuple<Int, T>>> EnumeratingIterable<T>::getIterator() {
+            return Ptr<Iterator<Tuple<Int, T>>>(new EnumeratingIterator(_iterable->getIterator()));
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterable<Tuple<Int, T>>> EnumeratingIterable<T>::getSelf() {
+            return this->shared_from_this();
+        }
+
+
+
+        // E n u m e r a t i n g I t e r a t o r
+        template<typename T>
+        inline EnumeratingIterable<T>::EnumeratingIterator::EnumeratingIterator(Ptr<Iterator<T>> iterator, Int index)
+            : _iterator(iterator), _index(index)
+        {
+        }
+
+
+        template<typename T>
+        inline Tuple<Int, T> EnumeratingIterable<T>::EnumeratingIterator::getCurrent() {
+            return Tuple<Int, T>(_index, _iterator->getCurrent());
+        }
+
+
+        template<typename T>
+        inline Bool EnumeratingIterable<T>::EnumeratingIterator::moveNext() {
+            if (_iterator->moveNext()) {
+                _index++;
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterator<Tuple<Int, T>>> EnumeratingIterable<T>::EnumeratingIterator::clone() {
+            return Ptr<Iterator<Tuple<Int, T>>>(new EnumeratingIterator(_iterator->clone(), _index));
+        }
     }
 
+
+
+    // I t e r a b l e C o m m o n
+    template<typename T>
+    template<Int dummy>
+    inline Ptr<Iterable<Tuple<Int, T>>> IterableCommon<T>::enumerate() {
+        return Ptr<Iterable<Tuple<Int, T>>>(new Iterables::EnumeratingIterable<T>(this->getSelf()));
+    }
 
 
     template<typename T>
@@ -334,6 +433,7 @@ namespace ReLang {
 
 
     template<typename T>
+    template<Int dummy>
     inline Ptr<Iterable<T>> IterableCommon<T>::filter(Ptr<Function<Bool, T>> predicate) {
         return Ptr<Iterable<T>>(
             new Iterables::FilterIterable<T>(this->getSelf(), predicate));
@@ -434,7 +534,6 @@ namespace ReLang {
     inline Bool IterableCommon<T>::getHasLength() {
         return false;
     }
-
 }
 
 

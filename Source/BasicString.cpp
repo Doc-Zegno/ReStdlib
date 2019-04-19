@@ -125,8 +125,12 @@ namespace ReLang {
     }
 
 
-    std::wostream & operator<<(std::wostream& out, Ptr<String> string) {
-        out << string->getRaw();
+    std::wostream& operator<<(std::wostream& out, Ptr<String> string) {
+        if (string) {
+            out << string->getRaw();
+        } else {
+            out << L"null";
+        }
         return out;
     }
 }

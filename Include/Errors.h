@@ -18,6 +18,13 @@ namespace ReLang {
     };
 
 
+    class NotSupportedError : public Error {
+    public:
+        NotSupportedError(const Char* message);
+        NotSupportedError(Ptr<String> message = Ptr<String>());
+    };
+
+
     class InvalidIteratorError : public Error {
     public:
         InvalidIteratorError(const Char* message);

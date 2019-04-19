@@ -150,6 +150,7 @@
     <ClInclude Include="..\..\Include\Ptr.h" />
     <ClInclude Include="..\..\Include\SelfReferencing.h" />
     <ClInclude Include="..\..\Include\BasicString.h" />
+    <ClInclude Include="..\..\Include\Tuple.h" />
     <ClInclude Include="..\..\Include\Utils\IterableUtils.h" />
     <ClInclude Include="..\..\Include\Utils\StringUtils.h" />
   </ItemGroup>

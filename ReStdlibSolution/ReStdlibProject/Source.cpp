@@ -53,8 +53,8 @@ int main() {
             }));
 
     std::wcout << std::boolalpha;
-    print(Ptr<Any>());
-    print(strings);
+    printAll(L"Strings:", strings);
+    printAll(L"Enumerated:", strings->enumerate());
     printAll(L"Has length:", strings->getHasLength());
     printAll(L"Lenght:", strings->getLength());
     printAll(L"First:", strings->getFirst());
@@ -63,11 +63,11 @@ int main() {
     printAll(L"Rest:", rest);
     printAll(L"Rest once again:", rest);
 
-    print(list);
+    printAll(L"Numbers:", list);
     printAll(L"Take 3:", list->take(3));
     printAll(L"Skip 2:", list->skip(2));
-    print(list->map(Ptr<Function<Int, Int>>(new SquareFunction())));
-    print(list->filter(Ptr<Function<Bool, Int>>(new IsOddFunction())));
+    printAll(L"Squares:", list->map(Ptr<Function<Int, Int>>(new SquareFunction())));
+    printAll(L"Odds:", list->filter(Ptr<Function<Bool, Int>>(new IsOddFunction())));
     print(L"For each:");
     list->forEach(Ptr<Function<Void, Int>>(new PrintIntAction()));
     printAll(L"Sum:", list->reduce(Ptr<Function<Int, Int, Int>>(new SumTwoIntsReducer())));

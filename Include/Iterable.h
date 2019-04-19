@@ -188,6 +188,35 @@ namespace ReLang {
 
 
 
+        template<typename U, typename V>
+        class ZippingIterable : public Iterable<Tuple<U, V>>, public EnableSelf<ZippingIterable<U, V>> {
+        private:
+            class ZippingIterator : public Iterator<Tuple<U, V>> {
+            private:
+                Ptr<Iterator<U>> _uIterator;
+                Ptr<Iterator<V>> _vIterator;
+
+            public:
+                ZippingIterator(Ptr<Iterator<U>> uIterator, Ptr<Iterator<V>> vIterator);
+
+                virtual Tuple<U, V> getCurrent() override;
+                virtual Bool moveNext() override;
+                virtual Ptr<Iterator<Tuple<U, V>>> clone() override;
+            };
+
+
+            Ptr<Iterable<U>> _us;
+            Ptr<Iterable<V>> _vs;
+
+        public:
+            ZippingIterable(Ptr<Iterable<U>> us, Ptr<Iterable<V>> vs);
+
+            virtual Ptr<Iterator<Tuple<U, V>>> getIterator() override;
+            virtual Ptr<Iterable<Tuple<U, V>>> getSelf() override;
+        };
+
+
+
         // M a p I t e r a b l e
         template<typename R, typename T>
         inline MapIterable<R, T>::MapIterable(Ptr<Iterable<T>> iterable, Ptr<Function<R, T>> mapping)
@@ -412,6 +441,54 @@ namespace ReLang {
         inline Ptr<Iterator<Tuple<Int, T>>> EnumeratingIterable<T>::EnumeratingIterator::clone() {
             return Ptr<Iterator<Tuple<Int, T>>>(new EnumeratingIterator(_iterator->clone(), _index));
         }
+
+
+
+        // Z i p p i n g I t e r a b l e
+        template<typename U, typename V>
+        inline ZippingIterable<U, V>::ZippingIterable(Ptr<Iterable<U>> us, Ptr<Iterable<V>> vs)
+            : _us(us), _vs(vs)
+        {
+        }
+
+
+        template<typename U, typename V>
+        inline Ptr<Iterator<Tuple<U, V>>> ZippingIterable<U, V>::getIterator() {
+            return Ptr<Iterator<Tuple<U, V>>>(new ZippingIterator(_us->getIterator(), _vs->getIterator()));
+        }
+
+
+        template<typename U, typename V>
+        inline Ptr<Iterable<Tuple<U, V>>> ZippingIterable<U, V>::getSelf() {
+            return this->shared_from_this();
+        }
+
+
+
+        // Z i p p i n g I t e r a t o r
+        template<typename U, typename V>
+        inline ZippingIterable<U, V>::ZippingIterator::ZippingIterator(Ptr<Iterator<U>> uIterator, Ptr<Iterator<V>> vIterator)
+            : _uIterator(uIterator), _vIterator(vIterator)
+        {
+        }
+
+
+        template<typename U, typename V>
+        inline Tuple<U, V> ZippingIterable<U, V>::ZippingIterator::getCurrent() {
+            return Tuple<U, V>(_uIterator->getCurrent(), _vIterator->getCurrent());
+        }
+
+
+        template<typename U, typename V>
+        inline Bool ZippingIterable<U, V>::ZippingIterator::moveNext() {
+            return _uIterator->moveNext() && _vIterator->moveNext();
+        }
+
+
+        template<typename U, typename V>
+        inline Ptr<Iterator<Tuple<U, V>>> ZippingIterable<U, V>::ZippingIterator::clone() {
+            return Ptr<Iterator<Tuple<U, V>>>(new ZippingIterator(_uIterator->clone(), _vIterator->clone()));
+        }
     }
 
 
@@ -533,6 +610,19 @@ namespace ReLang {
     template<typename T>
     inline Bool IterableCommon<T>::getHasLength() {
         return false;
+    }
+
+
+
+    // Global functions
+    template<typename Us, typename Vs>
+    auto zip(Ptr<Us> us, Ptr<Vs> vs) -> Ptr<Iterable<Tuple<decltype(us->getIterator()->getCurrent()), decltype(vs->getIterator()->getCurrent())>>> {
+        using U = decltype(us->getIterator()->getCurrent());
+        using V = decltype(vs->getIterator()->getCurrent());
+
+        auto uIterable = Ptr<Iterable<U>>(us);
+        auto vIterable = Ptr<Iterable<V>>(vs);
+        return Ptr<Iterable<Tuple<U, V>>>(new Iterables::ZippingIterable<U, V>(uIterable, vIterable));
     }
 }
 

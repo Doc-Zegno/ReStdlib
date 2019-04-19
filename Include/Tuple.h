@@ -27,7 +27,7 @@ namespace ReLang {
 
 
     template<typename T1, typename T2>
-    std::wostream& operator<<(std::wostream& out, Tuple<T1, T2>& tuple) {
+    std::wostream& operator<<(std::wostream& out, Tuple<T1, T2> tuple) {
         // TODO: replace with .toString() invocation
         out << L'(' << tuple.getFirst() << L", " << tuple.getSecond() << L')';
         return out;

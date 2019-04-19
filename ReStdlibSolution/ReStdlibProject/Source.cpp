@@ -66,11 +66,15 @@ int main() {
     printAll(L"Numbers:", list);
     printAll(L"Take 3:", list->take(3));
     printAll(L"Skip 2:", list->skip(2));
-    printAll(L"Squares:", list->map(Ptr<Function<Int, Int>>(new SquareFunction())));
+    auto squares = list->map(Ptr<Function<Int, Int>>(new SquareFunction()));
+    printAll(L"Squares:", squares);
     printAll(L"Odds:", list->filter(Ptr<Function<Bool, Int>>(new IsOddFunction())));
     print(L"For each:");
     list->forEach(Ptr<Function<Void, Int>>(new PrintIntAction()));
     printAll(L"Sum:", list->reduce(Ptr<Function<Int, Int, Int>>(new SumTwoIntsReducer())));
+
+    printAll(L"Zip:", zip(strings, squares));
+    printAll(L"Enumerated Zip:", zip(strings, squares)->enumerate());
 
     try {
         printAll(L"List[1] =", list->get(1));

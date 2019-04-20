@@ -22,6 +22,10 @@ namespace ReLang {
 
         virtual Ptr<Iterator<Char>> getIterator() override;
 
+        virtual Ptr<Iterable<Char>> take(Int number) override;
+
+        virtual Ptr<Iterable<Char>> skip(Int number) override;
+
         virtual Char getFirst() override;
 
         virtual Char getLast() override;

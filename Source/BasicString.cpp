@@ -1,6 +1,7 @@
 #include "BasicString.h"
 
 #include <sstream>
+#include <algorithm>
 
 #include "Errors.h"
 #include "Utils/IterableUtils.h"
@@ -66,20 +67,54 @@ namespace ReLang {
     }
 
 
+    Ptr<Iterable<Char>> String::take(Int number) {
+        if (number >= 0) {
+            auto length = Int(_raw.size());
+            auto translatedNumber = std::min(number, length);  // Can't take more than actually exist
+            return getSlice(0, translatedNumber, 1);
+        } else {
+            throw ValueError(L"Number of taken items should be non-negative");
+        }
+    }
+
+
+    Ptr<Iterable<Char>> String::skip(Int number) {
+        if (number >= 0) {
+            auto length = Int(_raw.size());
+            auto translatedNumber = std::min(number, length);  // Can't skip more than actually exist
+            return getSlice(translatedNumber, length, 1);
+        } else {
+            throw ValueError(L"Number of skipped items should be non-negative");
+        }
+    }
+
+
     Char String::getFirst() {
-        return operator[](0);
+        if (!_raw.empty()) {
+            return _raw[0];
+        } else {
+            throw EmptyIterableError();
+        }
     }
 
 
     Char String::getLast() {
-        auto lastIndex = Int(_raw.size()) - 1;
-        return operator[](lastIndex);
+        auto length = Int(_raw.size());
+        if (length > 0) {
+            return _raw[length - 1];
+        } else {
+            throw EmptyIterableError();
+        }
     }
 
 
     Ptr<Iterable<Char>> String::getRest() {
-        // TODO: String slice
-        return Ptr<Iterable<Char>>();
+        auto length = Int(_raw.size());
+        if (length > 0) {
+            return getSlice(1, length, 1);
+        } else {
+            throw EmptyIterableError();
+        }
     }
 
 
@@ -102,9 +137,28 @@ namespace ReLang {
         return (*this)[index];
     }
 
+
     Ptr<List<Char>> String::getSlice(Int start, Int end, Int step) {
-        // TODO: implement
-        return Ptr<List<Char>>();
+        if (step > 0) {
+            auto length = Int(_raw.size());
+            auto translatedStart = start == length ? start : Utils::translateIndex(start, length);
+            auto translatedEnd = end == length ? end : Utils::translateIndex(end, length);
+            if (translatedEnd < translatedStart) {
+                translatedEnd = translatedStart;
+            }
+
+            auto capacity = (translatedEnd - translatedStart + step - 1) / step;
+            auto buffer = std::wstring(capacity, L'\0');
+            auto j = 0;
+            for (auto i = translatedStart; i < translatedEnd; i += step) {
+                buffer[j] = _raw[i];
+                j++;
+            }
+            buffer.resize(j);
+            return makePtr<String>(std::move(buffer));
+        } else {
+            throw ValueError(L"Step of slice must be positive");
+        }
     }
 
 

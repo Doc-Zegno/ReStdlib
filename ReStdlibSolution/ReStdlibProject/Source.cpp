@@ -88,6 +88,15 @@ int main() {
         printAll(L"Nested slice =", nestedSlice);
         printAll(L"Nested slice[1] =", nestedSlice->get(1));
         printAll(L"Nested slice[-2] =", nestedSlice->get(-2));
+
+        auto string = strings->get(0);
+        printAll(L"String:", string);
+        printAll(L"String[1:9:2]:", string->getSlice(1, 9, 2));
+        printAll(L"String.take(5):", string->take(5));
+        printAll(L"String.take(20):", string->take(20));
+        printAll(L"String.skip(3):", string->skip(3));
+        printAll(L"String.skip(20):", string->skip(20));
+        printAll(L"String.rest:", string->getRest());
         print(list->get(10));
     } catch (IndexError& e) {
         print(e.getMessage());

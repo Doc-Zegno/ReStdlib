@@ -31,6 +31,7 @@ namespace ReLang {
         std::vector<T> _vector;
 
     public:
+        ArrayList(Int number, T value);
         ArrayList(std::initializer_list<T> list);
 
         virtual Ptr<Iterator<T>> getIterator() override;
@@ -98,8 +99,13 @@ namespace ReLang {
 
     // A r r a y L i s t
     template<typename T>
-    inline ArrayList<T>::ArrayList(std::initializer_list<T> list)
-        : _vector(list) { }
+    inline ArrayList<T>::ArrayList(Int number, T value) : _vector(number, value) {
+    }
+
+
+    template<typename T>
+    inline ArrayList<T>::ArrayList(std::initializer_list<T> list) : _vector(list) {
+    }
 
 
     template<typename T>
@@ -182,7 +188,7 @@ namespace ReLang {
         if (translatedEnd < translatedStart) {
             translatedEnd = translatedStart;
         }
-        return Ptr<List<T>>(new ArrayListSlice<T>(this->shared_from_this(), start, end, step));
+        return Ptr<List<T>>(new ArrayListSlice<T>(this->shared_from_this(), translatedStart, translatedEnd, step));
     }
 
 

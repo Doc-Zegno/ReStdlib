@@ -97,6 +97,7 @@ int main() {
         printAll(L"String.skip(3):", string->skip(3));
         printAll(L"String.skip(20):", string->skip(20));
         printAll(L"String.rest:", string->getRest());
+        printAll(L"List[1:-1]:", list->getSlice(1, -1, 1));
         print(list->get(10));
     } catch (IndexError& e) {
         print(e.getMessage());

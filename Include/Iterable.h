@@ -11,6 +11,8 @@
 #include "SelfReferencing.h"
 #include "Errors.h"
 
+#include "Utils/FunctionUtils.h"
+
 
 namespace ReLang {
     template<typename T>
@@ -52,6 +54,11 @@ namespace ReLang {
         virtual Ptr<Iterable<T>> take(Int number);
 
         virtual Ptr<Iterable<T>> skip(Int number);
+
+        template<typename K>
+        Ptr<Iterable<T>> sortBy(Ptr<Function<K, T>> key, Bool isAscending = Bool(true));
+
+        virtual Ptr<Iterable<T>> sortWith(Ptr<Function<Bool, T, T>> comparator);
 
         virtual Ptr<String> toString() override;
     };
@@ -696,6 +703,24 @@ namespace ReLang {
 
 
     template<typename T>
+    template<typename K>
+    inline Ptr<Iterable<T>> IterableCommon<T>::sortBy(Ptr<Function<K, T>> key, Bool isAscending) {
+        if (isAscending) {
+            return sortWith(Ptr<Function<Bool, T, T>>(new Utils::AscendingKeyComparator<K, T>(key)));
+        } else {
+            return sortWith(Ptr<Function<Bool, T, T>>(new Utils::DescendingKeyComparator<K, T>(key)));
+        }
+    }
+
+
+    template<typename T>
+    inline Ptr<Iterable<T>> IterableCommon<T>::sortWith(Ptr<Function<Bool, T, T>> comparator) {
+        // TODO: implement without accessing sort of ArrayList (endless loop)
+        throw NotImplementedError();
+    }
+
+
+    template<typename T>
     inline void IterableCommon<T>::forEach(Ptr<Function<Void, T>> action) {
         auto iterator = getIterator();
         while (iterator->moveNext()) {
@@ -815,7 +840,7 @@ namespace ReLang {
 #include "Utils/StringUtils.h"
 
 
-namespace ReLang {    
+namespace ReLang {
     template<typename T>
     inline Ptr<String> IterableCommon<T>::toString() {
         return Utils::join(L"::", this->getSelf(), L"", L"::[]");

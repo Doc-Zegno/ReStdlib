@@ -42,6 +42,22 @@ public:
 };
 
 
+class IdentityComparator : public Function<Bool, Int, Int> {
+public:
+    virtual Bool operator()(Int x, Int y) override {
+        return x <= y;
+    }
+};
+
+
+class SecondValueKey : public Function<Int, Tuple<Ptr<String>, Int>> {
+public:
+    virtual Int operator()(Tuple<Ptr<String>, Int> x) override {
+        return x.getSecond();
+    }
+};
+
+
 int main() {
     auto list = Ptr<List<Int>>(new ArrayList<Int>({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }));
     auto strings = Ptr<List<Ptr<String>>>(
@@ -106,6 +122,19 @@ int main() {
         printAll(L"Range:", makePtr<ArrayList<Int>>(range));
         printAll(L"Range[::2]:", makePtr<ArrayList<Int>>(range->getSlice(0, 5, 2)));
         printAll(L"Range.rest:", makePtr<ArrayList<Int>>(range->getRest()));
+
+        auto mess = Ptr<ArrayList<Int>>(new ArrayList<Int>({ 3, 4, 1, 7, 2, 6, 5 }));
+        auto messPairs = Ptr<ArrayList<Tuple<Ptr<String>, Int>>>(
+            new ArrayList<Tuple<Ptr<String>, Int>>{
+                Tuple<Ptr<String>, Int>(makePtr<String>(L"Hello World"), 3),
+                Tuple<Ptr<String>, Int>(makePtr<String>(L"Sample Text"), 1),
+                Tuple<Ptr<String>, Int>(makePtr<String>(L"Serious Arguments"), 2),
+            });
+        printAll(L"Unsorted:", mess);
+        printAll(L"Sorted:", mess->sortWith(Ptr<Function<Bool, Int, Int>>(new IdentityComparator())));
+        printAll(L"Unsorted Pairs:", messPairs);
+        printAll(L"Sorted Pairs:", messPairs->sortBy(Ptr<Function<Int, Tuple<Ptr<String>, Int>>>(new SecondValueKey())));
+
         print(list->get(10));
     } catch (IndexError& e) {
         print(e.getMessage());

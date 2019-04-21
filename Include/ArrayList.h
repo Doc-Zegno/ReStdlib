@@ -33,6 +33,7 @@ namespace ReLang {
     public:
         ArrayList(Int number, T value);
         ArrayList(Ptr<Iterable<T>> items);
+        ArrayList(std::vector<T>&& vector);
         ArrayList(std::initializer_list<T> list);
 
         virtual Ptr<Iterator<T>> getIterator() override;
@@ -47,6 +48,7 @@ namespace ReLang {
         virtual Int getLength() override;
         virtual Bool getHasLength() override;
         virtual Bool getIsEmpty() override;
+        virtual Ptr<Iterable<T>> sortWith(Ptr<Function<Bool, T, T>> comparator) override;
         virtual Ptr<Iterable<T>> getSelf() override;
 
         T operator[](Int index);
@@ -121,6 +123,11 @@ namespace ReLang {
         while (iterator->moveNext()) {
             _vector.push_back(iterator->getCurrent());
         }
+    }
+
+
+    template<typename T>
+    inline ArrayList<T>::ArrayList(std::vector<T>&& vector) : _vector(std::move(vector)) {
     }
 
 
@@ -235,6 +242,16 @@ namespace ReLang {
     template<typename T>
     inline Bool ArrayList<T>::getIsEmpty() {
         return _vector.empty();
+    }
+
+
+    template<typename T>
+    inline Ptr<Iterable<T>> ArrayList<T>::sortWith(Ptr<Function<Bool, T, T>> comparator) {
+        auto copy = _vector;
+        std::sort(copy.begin(), copy.end(), [comparator](T t1, T t2) {
+            return (*comparator)(t1, t2);
+        });
+        return makePtr<ArrayList>(std::move(copy));
     }
 
 

@@ -78,6 +78,9 @@
     <ClInclude Include="..\..\Include\Range.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Include\Utils\FunctionUtils.h">
+      <Filter>Файлы заголовков\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">

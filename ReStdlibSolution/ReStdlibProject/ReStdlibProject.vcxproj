@@ -131,6 +131,7 @@
     <ClCompile Include="..\..\Source\Errors.cpp" />
     <ClCompile Include="..\..\Source\BasicString.cpp" />
     <ClCompile Include="..\..\Source\Print.cpp" />
+    <ClCompile Include="..\..\Source\Range.cpp" />
     <ClCompile Include="..\..\Source\Utils\IterableUtils.cpp" />
     <ClCompile Include="..\..\Source\Utils\StringUtils.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -148,6 +149,7 @@
     <ClInclude Include="..\..\Include\Primitives.h" />
     <ClInclude Include="..\..\Include\Print.h" />
     <ClInclude Include="..\..\Include\Ptr.h" />
+    <ClInclude Include="..\..\Include\Range.h" />
     <ClInclude Include="..\..\Include\SelfReferencing.h" />
     <ClInclude Include="..\..\Include\BasicString.h" />
     <ClInclude Include="..\..\Include\Tuple.h" />

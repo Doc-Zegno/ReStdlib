@@ -32,6 +32,7 @@ namespace ReLang {
 
     public:
         ArrayList(Int number, T value);
+        ArrayList(Ptr<Iterable<T>> items);
         ArrayList(std::initializer_list<T> list);
 
         virtual Ptr<Iterator<T>> getIterator() override;
@@ -100,6 +101,20 @@ namespace ReLang {
     // A r r a y L i s t
     template<typename T>
     inline ArrayList<T>::ArrayList(Int number, T value) : _vector(number, value) {
+    }
+
+
+    template<typename T>
+    inline ArrayList<T>::ArrayList(Ptr<Iterable<T>> items) {
+        if (items->getHasLength()) {
+            // Reserve memory if possible
+            _vector.reserve(items->getLength());
+        }
+
+        auto iterator = items->getIterator();
+        while (iterator->moveNext()) {
+            _vector.push_back(iterator->getCurrent());
+        }
     }
 
 
@@ -284,13 +299,23 @@ namespace ReLang {
 
     template<typename T>
     inline Ptr<Iterable<T>> ArrayListSlice<T>::take(Int number) {
-        return getSlice(0, number, 1);
+        if (number >= 0) {
+            auto translatedNumber = std::min(number, _length);  // Can't take more than actually exist
+            return getSlice(0, translatedNumber, 1);
+        } else {
+            throw ValueError(L"Number of taken items should be non-negative");
+        }
     }
 
 
     template<typename T>
     inline Ptr<Iterable<T>> ArrayListSlice<T>::skip(Int number) {
-        return getSlice(number, _length, 1);
+        if (number >= 0) {
+            auto translatedNumber = std::min(number, _length);  // Can't skip more than actually exist
+            return getSlice(translatedNumber, _length, 1);
+        } else {
+            throw ValueError(L"Number of skipped items should be non-negative");
+        }
     }
 
 

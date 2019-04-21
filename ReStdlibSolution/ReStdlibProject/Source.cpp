@@ -3,6 +3,7 @@
 
 #include "Errors.h"
 #include "ArrayList.h"
+#include "Range.h"
 #include "BasicString.h"
 #include "Print.h"
 
@@ -98,6 +99,13 @@ int main() {
         printAll(L"String.skip(20):", string->skip(20));
         printAll(L"String.rest:", string->getRest());
         printAll(L"List[1:-1]:", list->getSlice(1, -1, 1));
+        printAll(L"Strings.indices:", strings->getIndices());
+
+        auto range = makePtr<Range>(0, 10, 2);
+        printAll(L"Range(0, 10, 2):", range);
+        printAll(L"Range:", makePtr<ArrayList<Int>>(range));
+        printAll(L"Range[::2]:", makePtr<ArrayList<Int>>(range->getSlice(0, 5, 2)));
+        printAll(L"Range.rest:", makePtr<ArrayList<Int>>(range->getRest()));
         print(list->get(10));
     } catch (IndexError& e) {
         print(e.getMessage());

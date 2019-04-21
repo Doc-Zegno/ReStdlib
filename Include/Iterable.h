@@ -22,11 +22,18 @@ namespace ReLang {
         virtual Ptr<Iterator<T>> getIterator() = 0;
 
         virtual T getFirst();
+
         virtual T getLast();
+
         virtual Ptr<Iterable<T>> getRest();
+
         virtual Bool getIsEmpty();
+
         virtual Int getLength();
+
         virtual Bool getHasLength();
+
+        virtual Ptr<Iterable<Int>> getIndices();
 
         template<Int dummy = 0>
         Ptr<Iterable<Tuple<Int, T>>> enumerate();
@@ -213,6 +220,34 @@ namespace ReLang {
 
             virtual Ptr<Iterator<Tuple<U, V>>> getIterator() override;
             virtual Ptr<Iterable<Tuple<U, V>>> getSelf() override;
+        };
+
+
+
+        template<typename T>
+        class IndexingIterable : public Iterable<Int>, public EnableSelf<IndexingIterable<T>> {
+        private:
+            class IndexingIterator : public Iterator<Int> {
+            private:
+                Ptr<Iterator<T>> _iterator;
+                Int _index;
+
+            public:
+                IndexingIterator(Ptr<Iterator<T>> iterator, Int index = -1);
+
+                virtual Int getCurrent() override;
+                virtual Bool moveNext() override;
+                virtual Ptr<Iterator<Int>> clone() override;
+            };
+
+
+            Ptr<Iterable<T>> _iterable;
+
+        public:
+            IndexingIterable(Ptr<Iterable<T>> iterable);
+
+            virtual Ptr<Iterator<Int>> getIterator() override;
+            virtual Ptr<Iterable<Int>> getSelf() override;
         };
 
 
@@ -489,6 +524,62 @@ namespace ReLang {
         inline Ptr<Iterator<Tuple<U, V>>> ZippingIterable<U, V>::ZippingIterator::clone() {
             return Ptr<Iterator<Tuple<U, V>>>(new ZippingIterator(_uIterator->clone(), _vIterator->clone()));
         }
+
+
+
+        // I n d e x i n g I t e r a b l e
+        template<typename T>
+        inline IndexingIterable<T>::IndexingIterable(Ptr<Iterable<T>> iterable) : _iterable(iterable) {
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterator<Int>> IndexingIterable<T>::getIterator() {
+            return Ptr<Iterator<Int>>(new IndexingIterator(_iterable->getIterator()));
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterable<Int>> IndexingIterable<T>::getSelf() {
+            return this->shared_from_this();
+        }
+
+
+
+        // I n d e x i n g I t e r a t o r
+        template<typename T>
+        inline IndexingIterable<T>::IndexingIterator::IndexingIterator(Ptr<Iterator<T>> iterator, Int index)
+            : _iterator(iterator), _index(index)
+        {
+        }
+
+
+        template<typename T>
+        inline Int IndexingIterable<T>::IndexingIterator::getCurrent() {
+            if (_index >= 0) {
+                return _index;
+            } else {
+                throw InvalidIteratorError();
+            }
+        }
+
+
+        template<typename T>
+        inline Bool IndexingIterable<T>::IndexingIterator::moveNext() {
+            auto moved = _iterator->moveNext();
+            if (moved) {
+                _index++;
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterator<Int>> IndexingIterable<T>::IndexingIterator::clone() {
+            return Ptr<Iterator<Int>>(new IndexingIterator(_iterator->clone(), _index));
+        }
     }
 
 
@@ -610,6 +701,12 @@ namespace ReLang {
     template<typename T>
     inline Bool IterableCommon<T>::getHasLength() {
         return false;
+    }
+
+
+    template<typename T>
+    inline Ptr<Iterable<Int>> IterableCommon<T>::getIndices() {
+        return Ptr<Iterable<Int>>(new Iterables::IndexingIterable<T>(this->getSelf()));
     }
 
 

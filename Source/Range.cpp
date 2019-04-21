@@ -91,6 +91,11 @@ namespace ReLang {
     }
 
 
+    Ptr<Iterable<Int>> Range::getIndices() {
+        return Ptr<Iterable<Int>>(new Range(0, _length, 1));
+    }
+
+
     Ptr<Iterable<Int>> Range::take(Int number) {
         if (number >= 0) {
             auto translatedNumber = std::min(number, _length);  // Can't take more than actually exist

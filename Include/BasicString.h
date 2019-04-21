@@ -42,6 +42,8 @@ namespace ReLang {
 
         virtual Ptr<List<Char>> getSlice(Int start, Int end, Int step) override;
 
+        inline Ptr<Iterable<Int>> getIndices() override;
+
         virtual Ptr<String> toString() override;
 
         Char operator[](Int index);

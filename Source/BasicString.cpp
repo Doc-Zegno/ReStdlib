@@ -4,6 +4,7 @@
 #include <algorithm>
 
 #include "Errors.h"
+#include "Range.h"
 #include "Utils/IterableUtils.h"
 
 
@@ -159,6 +160,12 @@ namespace ReLang {
         } else {
             throw ValueError(L"Step of slice must be positive");
         }
+    }
+
+
+    inline Ptr<Iterable<Int>> String::getIndices() {
+        auto length = Int(_raw.size());
+        return Ptr<Iterable<Int>>(new Range(0, length, 1));
     }
 
 

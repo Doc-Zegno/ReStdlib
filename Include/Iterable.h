@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <algorithm>
 #include <type_traits>
 
 #include "Tuple.h"
@@ -89,6 +90,9 @@ namespace ReLang {
             MapIterable(Ptr<Iterable<T>> iterable, Ptr<Function<R, T>> mapping);
 
             virtual Ptr<Iterator<R>> getIterator() override;
+            virtual Bool getHasLength() override;
+            virtual Int getLength() override;
+            virtual Bool getIsEmpty() override;
             virtual Ptr<Iterable<R>> getSelf() override;
         };
 
@@ -101,9 +105,10 @@ namespace ReLang {
             private:
                 Ptr<Iterator<T>> _iterator;
                 Ptr<Function<Bool, T>> _predicate;
+                T _current;
 
             public:
-                FilterIterator(Ptr<Iterator<T>> iterator, Ptr<Function<Bool, T>> predicate);
+                FilterIterator(Ptr<Iterator<T>> iterator, Ptr<Function<Bool, T>> predicate, T current = T());
 
                 virtual T getCurrent() override;
                 virtual Bool moveNext() override;
@@ -190,6 +195,9 @@ namespace ReLang {
             EnumeratingIterable(Ptr<Iterable<T>> iterable);
 
             virtual Ptr<Iterator<Tuple<Int, T>>> getIterator() override;
+            virtual Bool getHasLength() override;
+            virtual Int getLength() override;
+            virtual Bool getIsEmpty() override;
             virtual Ptr<Iterable<Tuple<Int, T>>> getSelf() override;
         };
 
@@ -219,6 +227,9 @@ namespace ReLang {
             ZippingIterable(Ptr<Iterable<U>> us, Ptr<Iterable<V>> vs);
 
             virtual Ptr<Iterator<Tuple<U, V>>> getIterator() override;
+            virtual Bool getHasLength() override;
+            virtual Int getLength() override;
+            virtual Bool getIsEmpty() override;
             virtual Ptr<Iterable<Tuple<U, V>>> getSelf() override;
         };
 
@@ -247,6 +258,9 @@ namespace ReLang {
             IndexingIterable(Ptr<Iterable<T>> iterable);
 
             virtual Ptr<Iterator<Int>> getIterator() override;
+            virtual Bool getHasLength() override;
+            virtual Int getLength() override;
+            virtual Bool getIsEmpty() override;
             virtual Ptr<Iterable<Int>> getSelf() override;
         };
 
@@ -262,6 +276,24 @@ namespace ReLang {
         template<typename R, typename T>
         inline Ptr<Iterator<R>> MapIterable<R, T>::getIterator() {
             return Ptr<Iterator<R>>(new MapIterator(_iterable->getIterator(), _mapping));
+        }
+
+
+        template<typename R, typename T>
+        inline Bool MapIterable<R, T>::getHasLength() {
+            return _iterable->getHasLength();
+        }
+
+
+        template<typename R, typename T>
+        inline Int MapIterable<R, T>::getLength() {
+            return _iterable->getLength();
+        }
+
+
+        template<typename R, typename T>
+        inline Bool MapIterable<R, T>::getIsEmpty() {
+            return _iterable->getIsEmpty();
         }
 
 
@@ -300,14 +332,14 @@ namespace ReLang {
 
         // F i l t e r I t e r a t o r
         template<typename T>
-        inline FilterIterable<T>::FilterIterator::FilterIterator(Ptr<Iterator<T>> iterator, Ptr<Function<Bool, T>> predicate)
-            : _iterator(iterator), _predicate(predicate) {
+        inline FilterIterable<T>::FilterIterator::FilterIterator(Ptr<Iterator<T>> iterator, Ptr<Function<Bool, T>> predicate, T current)
+            : _iterator(iterator), _predicate(predicate), _current(current) {
         }
 
 
         template<typename T>
         inline T FilterIterable<T>::FilterIterator::getCurrent() {
-            return _iterator->getCurrent();
+            return _current;
         }
 
 
@@ -315,7 +347,8 @@ namespace ReLang {
         inline Bool FilterIterable<T>::FilterIterator::moveNext() {
             while (true) {
                 if (_iterator->moveNext()) {
-                    if (_predicate->operator()(_iterator->getCurrent())) {
+                    _current = _iterator->getCurrent();
+                    if ((*_predicate)(_current)) {
                         return true;
                     }
                 } else {
@@ -327,7 +360,7 @@ namespace ReLang {
 
         template<typename T>
         inline Ptr<Iterator<T>> FilterIterable<T>::FilterIterator::clone() {
-            return Ptr<Iterator<T>>(new FilterIterator(_iterator->clone(), _predicate));
+            return Ptr<Iterator<T>>(new FilterIterator(_iterator->clone(), _predicate, _current));
         }
 
 
@@ -441,6 +474,24 @@ namespace ReLang {
 
 
         template<typename T>
+        inline Bool EnumeratingIterable<T>::getHasLength() {
+            return _iterable->getHasLength();
+        }
+
+
+        template<typename T>
+        inline Int EnumeratingIterable<T>::getLength() {
+            return _iterable->getLength();
+        }
+
+
+        template<typename T>
+        inline Bool EnumeratingIterable<T>::getIsEmpty() {
+            return _iterable->getIsEmpty();
+        }
+
+
+        template<typename T>
         inline Ptr<Iterable<Tuple<Int, T>>> EnumeratingIterable<T>::getSelf() {
             return this->shared_from_this();
         }
@@ -494,6 +545,24 @@ namespace ReLang {
 
 
         template<typename U, typename V>
+        inline Bool ZippingIterable<U, V>::getHasLength() {
+            return _us->getHasLength() && _vs->getHasLength();
+        }
+
+
+        template<typename U, typename V>
+        inline Int ZippingIterable<U, V>::getLength() {
+            return std::min(_us->getLength(), _vs->getLength());
+        }
+
+
+        template<typename U, typename V>
+        inline Bool ZippingIterable<U, V>::getIsEmpty() {
+            return _us->getIsEmpty() || _vs->getIsEmpty();
+        }
+
+
+        template<typename U, typename V>
         inline Ptr<Iterable<Tuple<U, V>>> ZippingIterable<U, V>::getSelf() {
             return this->shared_from_this();
         }
@@ -536,6 +605,24 @@ namespace ReLang {
         template<typename T>
         inline Ptr<Iterator<Int>> IndexingIterable<T>::getIterator() {
             return Ptr<Iterator<Int>>(new IndexingIterator(_iterable->getIterator()));
+        }
+
+
+        template<typename T>
+        inline Bool IndexingIterable<T>::getHasLength() {
+            return _iterable->getHasLength();
+        }
+
+
+        template<typename T>
+        inline Int IndexingIterable<T>::getLength() {
+            return _iterable->getLength();
+        }
+
+
+        template<typename T>
+        inline Bool IndexingIterable<T>::getIsEmpty() {
+            return _iterable->getIsEmpty();
         }
 
 

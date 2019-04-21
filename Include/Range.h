@@ -21,6 +21,7 @@ namespace ReLang {
         virtual Ptr<Iterator<Int>> getIterator() override;
         virtual Int get(Int index) override;
         virtual Ptr<List<Int>> getSlice(Int start, Int end, Int step) override;
+        virtual Ptr<Iterable<Int>> getIndices() override;
         virtual Ptr<Iterable<Int>> take(Int number) override;
         virtual Ptr<Iterable<Int>> skip(Int number) override;
         virtual Int getFirst() override;

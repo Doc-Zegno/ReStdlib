@@ -43,6 +43,7 @@ namespace ReLang {
         virtual Ptr<Iterable<T>> getRest() override;
         virtual T get(Int index) override;
         virtual Ptr<List<T>> getSlice(Int start, Int end, Int step) override;
+        virtual Ptr<Iterable<Int>> getIndices() override;
         virtual Int getLength() override;
         virtual Bool getHasLength() override;
         virtual Bool getIsEmpty() override;
@@ -88,6 +89,7 @@ namespace ReLang {
         virtual Ptr<Iterable<T>> getRest() override;
         virtual T get(Int index) override;
         virtual Ptr<List<T>> getSlice(Int start, Int end, Int step) override;
+        virtual Ptr<Iterable<Int>> getIndices() override;
         virtual Int getLength() override;
         virtual Bool getHasLength() override;
         virtual Bool getIsEmpty() override;
@@ -95,9 +97,13 @@ namespace ReLang {
 
         T operator[](Int index);
     };
+}
 
 
+#include "Range.h"
 
+
+namespace ReLang {
     // A r r a y L i s t
     template<typename T>
     inline ArrayList<T>::ArrayList(Int number, T value) : _vector(number, value) {
@@ -204,6 +210,13 @@ namespace ReLang {
             translatedEnd = translatedStart;
         }
         return Ptr<List<T>>(new ArrayListSlice<T>(this->shared_from_this(), translatedStart, translatedEnd, step));
+    }
+
+
+    template<typename T>
+    inline Ptr<Iterable<Int>> ArrayList<T>::getIndices() {
+        auto length = Int(_vector.size());
+        return Ptr<Iterable<Int>>(new Range(0, length, 1));
     }
 
 
@@ -364,6 +377,12 @@ namespace ReLang {
             translatedEnd = translatedStart;
         }
         return Ptr<List<T>>(new ArrayListSlice<T>(_list, _start + translatedStart * _step, _start + translatedEnd * _step, _step * step));
+    }
+
+
+    template<typename T>
+    inline Ptr<Iterable<Int>> ArrayListSlice<T>::getIndices() {
+        return Ptr<Iterable<Int>>(new Range(0, _length, 1));
     }
 
 

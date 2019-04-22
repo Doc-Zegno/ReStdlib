@@ -21,6 +21,9 @@ namespace ReLang {
 
     template<typename T>
     class IterableCommon : public Any, public SelfReferencing<Iterable<T>> {
+    private:
+        Tuple<T, Int> supremeWith(Ptr<Function<Bool, T, T>> comparator);
+
     public:
         virtual Ptr<Iterator<T>> getIterator() = 0;
 
@@ -55,10 +58,25 @@ namespace ReLang {
 
         virtual Ptr<Iterable<T>> skip(Int number);
 
+        template<Int dummy = 0>
+        Ptr<Iterable<T>> sort(Bool isAscending = Bool(true));
+
         template<typename K>
         Ptr<Iterable<T>> sortBy(Ptr<Function<K, T>> key, Bool isAscending = Bool(true));
 
         virtual Ptr<Iterable<T>> sortWith(Ptr<Function<Bool, T, T>> comparator);
+
+        template<typename K>
+        Tuple<T, Int> maxBy(Ptr<Function<K, T>> key);
+
+        template<typename K>
+        Tuple<T, Int> minBy(Ptr<Function<K, T>> key);
+
+        template<Int dummy = 0>
+        Tuple<T, Int> max();
+
+        template<Int dummy = 0>
+        Tuple<T, Int> min();
 
         virtual Ptr<String> toString() override;
     };
@@ -703,6 +721,17 @@ namespace ReLang {
 
 
     template<typename T>
+    template<Int dummy>
+    inline Ptr<Iterable<T>> IterableCommon<T>::sort(Bool isAscending) {
+        if (isAscending) {
+            return sortWith(Ptr<Function<Bool, T, T>>(new Utils::AscendingComparator<T>()));
+        } else {
+            return sortWith(Ptr<Function<Bool, T, T>>(new Utils::DescendingComparator<T>()));
+        }
+    }
+
+
+    template<typename T>
     template<typename K>
     inline Ptr<Iterable<T>> IterableCommon<T>::sortBy(Ptr<Function<K, T>> key, Bool isAscending) {
         if (isAscending) {
@@ -717,6 +746,58 @@ namespace ReLang {
     inline Ptr<Iterable<T>> IterableCommon<T>::sortWith(Ptr<Function<Bool, T, T>> comparator) {
         // TODO: implement without accessing sort of ArrayList (endless loop)
         throw NotImplementedError();
+    }
+
+
+    template<typename T>
+    template<typename K>
+    inline Tuple<T, Int> IterableCommon<T>::maxBy(Ptr<Function<K, T>> key) {
+        return supremeWith(Ptr<Function<Bool, T, T>>(new Utils::AscendingKeyComparator<K, T>(key)));
+    }
+
+
+    template<typename T>
+    template<typename K>
+    inline Tuple<T, Int> IterableCommon<T>::minBy(Ptr<Function<K, T>> key) {
+        return supremeWith(Ptr<Function<Bool, T, T>>(new Utils::DescendingKeyComparator<K, T>(key)));
+    }
+
+
+    template<typename T>
+    template<Int dummy>
+    inline Tuple<T, Int> IterableCommon<T>::max() {
+        return supremeWith(Ptr<Function<Bool, T, T>>(new Utils::AscendingComparator<T>()));
+    }
+
+
+    template<typename T>
+    template<Int dummy>
+    inline Tuple<T, Int> IterableCommon<T>::min() {
+        return supremeWith(Ptr<Function<Bool, T, T>>(new Utils::DescendingComparator<T>()));
+    }
+
+
+    template<typename T>
+    inline Tuple<T, Int> IterableCommon<T>::supremeWith(Ptr<Function<Bool, T, T>> comparator) {
+        auto iterator = getIterator();
+        if (iterator->moveNext()) {
+            auto bestItem = iterator->getCurrent();
+            auto bestIndex = 0;
+
+            auto index = 1;
+            while (iterator->moveNext()) {
+                auto item = iterator->getCurrent();
+                if ((*comparator)(bestItem, item)) {
+                    bestItem = item;
+                    bestIndex = index;
+                }
+                index++;
+            }
+
+            return Tuple<T, Int>(bestItem, bestIndex);
+        } else {
+            throw EmptyIterableError();
+        }
     }
 
 

@@ -132,8 +132,13 @@ int main() {
             });
         printAll(L"Unsorted:", mess);
         printAll(L"Sorted:", mess->sortWith(Ptr<Function<Bool, Int, Int>>(new IdentityComparator())));
+        printAll(L"Sorted:", mess->sort(false));
         printAll(L"Unsorted Pairs:", messPairs);
-        printAll(L"Sorted Pairs:", messPairs->sortBy(Ptr<Function<Int, Tuple<Ptr<String>, Int>>>(new SecondValueKey())));
+        printAll(L"Sorted Pairs:", messPairs->sortBy(Ptr<Function<Int, Tuple<Ptr<String>, Int>>>(new SecondValueKey()), false));
+        printAll(L"Mess.max():", mess->max());
+        printAll(L"Mess.min():", mess->min());
+        printAll(L"MessPairs.maxBy():", messPairs->maxBy(Ptr<Function<Int, Tuple<Ptr<String>, Int>>>(new SecondValueKey())));
+        printAll(L"MessPairs.minBy():", messPairs->minBy(Ptr<Function<Int, Tuple<Ptr<String>, Int>>>(new SecondValueKey())));
 
         print(list->get(10));
     } catch (IndexError& e) {

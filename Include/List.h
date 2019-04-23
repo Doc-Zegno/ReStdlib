@@ -6,7 +6,7 @@
 
 namespace ReLang {
     template<typename T>
-    class List : public Iterable<T> {
+    class List : public virtual Iterable<T> {
     public:
         virtual T get(Int index) = 0;
         virtual Ptr<List<T>> getSlice(Int start, Int end, Int step) = 0;

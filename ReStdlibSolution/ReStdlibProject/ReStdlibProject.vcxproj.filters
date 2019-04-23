@@ -81,6 +81,15 @@
     <ClInclude Include="..\..\Include\Utils\FunctionUtils.h">
       <Filter>Файлы заголовков\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Include\MutableIterable.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MutatingIterator.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MutableList.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">

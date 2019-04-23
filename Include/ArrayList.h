@@ -4,16 +4,16 @@
 #include <algorithm>
 #include <initializer_list>
 
-#include "List.h"
+#include "MutableList.h"
 #include "Errors.h"
 #include "Utils/IterableUtils.h"
 
 
 namespace ReLang {
     template<typename T>
-    class ArrayList : public List<T>, public EnableSelf<ArrayList<T>> {
+    class ArrayList : public MutableList<T>, public EnableSelf<ArrayList<T>> {
     private:
-        class ArrayListIterator : public Iterator<T> {
+        class ArrayListIterator : public MutatingIterator<T> {
         private:
             Ptr<ArrayList> _list;
             Int _index;
@@ -23,6 +23,7 @@ namespace ReLang {
             ArrayListIterator(Ptr<ArrayList> list, Int index = -1);
 
             virtual T getCurrent() override;
+            virtual void setCurrent(T value) override;
             virtual Bool moveNext() override;
             virtual Ptr<Iterator<T>> clone() override;
         };
@@ -37,12 +38,14 @@ namespace ReLang {
         ArrayList(std::initializer_list<T> list);
 
         virtual Ptr<Iterator<T>> getIterator() override;
+        virtual Ptr<MutatingIterator<T>> getMutatingIterator() override;
         virtual Ptr<Iterable<T>> take(Int number) override;
         virtual Ptr<Iterable<T>> skip(Int number) override;
         virtual T getFirst() override;
         virtual T getLast() override;
         virtual Ptr<Iterable<T>> getRest() override;
         virtual T get(Int index) override;
+        virtual void set(Int index, T value) override;
         virtual Ptr<List<T>> getSlice(Int start, Int end, Int step) override;
         virtual Ptr<Iterable<Int>> getIndices() override;
         virtual Int getLength() override;
@@ -51,7 +54,7 @@ namespace ReLang {
         virtual Ptr<Iterable<T>> sortWith(Ptr<Function<Bool, T, T>> comparator) override;
         virtual Ptr<Iterable<T>> getSelf() override;
 
-        T operator[](Int index);
+        T& operator[](Int index);
     };
 
 
@@ -146,6 +149,14 @@ namespace ReLang {
 
 
     template<typename T>
+    inline Ptr<MutatingIterator<T>> ArrayList<T>::getMutatingIterator() {
+        return Ptr<MutatingIterator<T>>(
+            new ArrayListIterator(
+                this->shared_from_this()));
+    }
+
+
+    template<typename T>
     inline Ptr<Iterable<T>> ArrayList<T>::take(Int number) {
         if (number >= 0) {
             auto length = Int(_vector.size());
@@ -209,6 +220,12 @@ namespace ReLang {
 
 
     template<typename T>
+    inline void ArrayList<T>::set(Int index, T value) {
+        (*this)[index] = value;
+    }
+
+
+    template<typename T>
     inline Ptr<List<T>> ArrayList<T>::getSlice(Int start, Int end, Int step) {
         auto length = Int(_vector.size());
         auto translatedStart = start == length ? start : Utils::translateIndex(start, length);
@@ -251,7 +268,7 @@ namespace ReLang {
         std::sort(copy.begin(), copy.end(), [comparator](T t1, T t2) {
             return (*comparator)(t1, t2);
         });
-        return makePtr<ArrayList>(std::move(copy));
+        return Ptr<Iterable<T>>(new ArrayList<T>(std::move(copy)));
     }
 
 
@@ -263,7 +280,7 @@ namespace ReLang {
 
 
     template<typename T>
-    inline T ArrayList<T>::operator[](Int index) {
+    inline T& ArrayList<T>::operator[](Int index) {
         auto end = Int(_vector.size());
         auto translatedIndex = Utils::translateIndex(index, end);
         return _vector[translatedIndex];
@@ -282,6 +299,16 @@ namespace ReLang {
     {
         if (_index >= 0 && _index < _maximumIndex) {
             return (*_list)[_index];
+        } else {
+            throw InvalidIteratorError();
+        }
+    }
+
+
+    template<typename T>
+    inline void ArrayList<T>::ArrayListIterator::setCurrent(T value) {
+        if (_index >= 0 && _index < _maximumIndex) {
+            (*_list)[_index] = value;
         } else {
             throw InvalidIteratorError();
         }

@@ -146,6 +146,9 @@
     <ClInclude Include="..\..\Include\Iterable.h" />
     <ClInclude Include="..\..\Include\Iterator.h" />
     <ClInclude Include="..\..\Include\List.h" />
+    <ClInclude Include="..\..\Include\MutableIterable.h" />
+    <ClInclude Include="..\..\Include\MutableList.h" />
+    <ClInclude Include="..\..\Include\MutatingIterator.h" />
     <ClInclude Include="..\..\Include\Primitives.h" />
     <ClInclude Include="..\..\Include\Print.h" />
     <ClInclude Include="..\..\Include\Ptr.h" />

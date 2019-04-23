@@ -17,6 +17,22 @@ namespace ReLang {
 
 
         template<typename T>
+        void appendToBuilder(std::wostringstream& builder, T value) {
+            builder << value;
+        }
+
+
+        void appendToBuilder(std::wostringstream& builder, Ptr<Any> value);
+
+
+        template<typename T>
+        void appendToBuilder(std::wostringstream& builder, Ptr<T> value) {
+            auto any = std::static_pointer_cast<Any>(value);
+            appendToBuilder(builder, any);
+        }
+
+
+        template<typename T>
         Ptr<String> join(const Char* separator, Ptr<Iterable<T>> items, const Char* prefix = L"", const Char* suffix = L"") {
             auto builder = std::wostringstream();
             builder << prefix;
@@ -27,21 +43,11 @@ namespace ReLang {
                 if (!isFirst) {
                     builder << separator;
                 }
-                builder << current;
+                appendToBuilder(builder, current);
                 isFirst = false;
             }
             builder << suffix;
             return makeStringFromBuilder(builder);
-        }
-
-
-        Ptr<String> join(const Char* separator, Ptr<Iterable<Ptr<Any>>> items, const Char* prefix = L"", const Char* suffix = L"");
-
-
-        template<typename T>
-        Ptr<String> join(const Char* separator, Ptr<Iterable<Ptr<T>>> items, const Char* prefix = L"", const Char* suffix = L"") {
-            auto ptr = std::reinterpret_pointer_cast<Iterable<Ptr<Any>>>(items);
-            return join(separator, ptr, prefix, suffix);
         }
 
 

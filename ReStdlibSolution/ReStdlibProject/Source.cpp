@@ -140,6 +140,12 @@ int main() {
         printAll(L"MessPairs.maxBy():", messPairs->maxBy(Ptr<Function<Int, Tuple<Ptr<String>, Int>>>(new SecondValueKey())));
         printAll(L"MessPairs.minBy():", messPairs->minBy(Ptr<Function<Int, Tuple<Ptr<String>, Int>>>(new SecondValueKey())));
 
+        auto consed = mess->cons(Int(8))->cons(Int(10))->cons(Int(9));
+        auto extended = consed->cons(Int(11));
+        printAll(L"Cons(9, 10, 8, mess):", consed);
+        printAll(L"Cons(11, consed):", extended);
+        printAll(L"Sorted extended:", extended->sort());
+
         print(list->get(10));
     } catch (IndexError& e) {
         print(e.getMessage());

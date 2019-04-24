@@ -80,6 +80,11 @@ namespace UnitTestProject {
             auto messed = Ptr<ArrayList<Int>>(new ArrayList<Int>({ 3, 4, 1, 7, 2, 6, 5 }));
             Assert::AreEqual(L"[1, 2, 3, 4, 5, 6, 7]", messed->sort()->toString()->getRaw().c_str());
             Assert::AreEqual(L"[7, 6, 5, 4, 3, 2, 1]", messed->sort(false)->toString()->getRaw().c_str());
+
+            // Cons VSL not dead
+            auto consed = messed->cons(Int(8))->cons(Int(9));
+            Assert::AreEqual(L"9::8::3::4::1::7::2::6::5::[]", consed->toString()->getRaw().c_str());
+            Assert::AreEqual(L"1::2::3::4::5::6::7::8::9::[]", consed->sort()->toString()->getRaw().c_str());
         }
 
 

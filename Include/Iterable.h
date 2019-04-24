@@ -78,6 +78,8 @@ namespace ReLang {
         template<Int dummy = 0>
         Tuple<T, Int> min();
 
+        virtual Ptr<Iterable<T>> cons(T value);
+
         virtual Ptr<String> toString() override;
     };
 
@@ -287,6 +289,84 @@ namespace ReLang {
             virtual Int getLength() override;
             virtual Bool getIsEmpty() override;
             virtual Ptr<Iterable<Int>> getSelf() override;
+        };
+
+
+
+        template<typename T>
+        struct ConstructingNode {
+            T value;
+            Ptr<ConstructingNode<T>> next;
+
+            ConstructingNode(T value, Ptr<ConstructingNode<T>> next = Ptr<ConstructingNode<T>>()) : value(value), next(next) {}
+        };
+
+
+
+        template<typename T>
+        class ConstructingIterable : public Iterable<T>, public EnableSelf<ConstructingIterable<T>> {
+        private:
+            class ConstructingIterator : public Iterator<T> {
+            private:
+                Ptr<ConstructingNode<T>> _first;
+                Ptr<Iterator<T>> _rest;
+                Bool _isValid;
+
+            public:
+                ConstructingIterator(Ptr<ConstructingNode<T>> first, Ptr<Iterator<T>> rest, Bool isValid);
+
+                virtual T getCurrent() override;
+                virtual Bool moveNext() override;
+                virtual Ptr<Iterator<T>> clone() override;
+            };
+
+
+            Ptr<ConstructingNode<T>> _first;
+            Ptr<Iterable<T>> _rest;
+
+        public:
+            ConstructingIterable(Ptr<ConstructingNode<T>> first, Ptr<Iterable<T>> rest);
+
+            virtual Ptr<Iterator<T>> getIterator() override;
+            virtual Bool getHasLength() override;
+            virtual Int getLength() override;
+            virtual Bool getIsEmpty() override;
+            virtual Ptr<Iterable<T>> getSelf() override;
+            virtual Ptr<Iterable<T>> cons(T value) override;
+        };
+
+
+
+        template<typename T>
+        class VectorIterable : public Iterable<T>, public EnableSelf<VectorIterable<T>> {
+        private:
+            class VectorIterator : public Iterator<T> {
+            private:
+                Ptr<VectorIterable<T>> _iterable;
+                Int _index;
+                Int _length;
+
+            public:
+                VectorIterator(Ptr<VectorIterable<T>> iterable, Int index, Int length);
+
+                virtual T getCurrent() override;
+                virtual Bool moveNext() override;
+                virtual Ptr<Iterator<T>> clone() override;
+            };
+
+
+            std::vector<T> _vector;
+
+        public:
+            VectorIterable(std::vector<T>&& vector);
+
+            virtual Ptr<Iterator<T>> getIterator() override;
+            virtual Bool getHasLength() override;
+            virtual Int getLength() override;
+            virtual Bool getIsEmpty() override;
+            virtual Ptr<Iterable<T>> getSelf() override;
+
+            T operator[](Int index);
         };
 
 
@@ -692,6 +772,183 @@ namespace ReLang {
         inline Ptr<Iterator<Int>> IndexingIterable<T>::IndexingIterator::clone() {
             return Ptr<Iterator<Int>>(new IndexingIterator(_iterator->clone(), _index));
         }
+
+
+
+        // C o n s t r u c t i n g I t e r a b l e
+        template<typename T>
+        inline ConstructingIterable<T>::ConstructingIterable(Ptr<ConstructingNode<T>> first, Ptr<Iterable<T>> rest)
+            : _first(first), _rest(rest)
+        {
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterator<T>> ConstructingIterable<T>::getIterator() {
+            return Ptr<Iterator<T>>(new ConstructingIterator(_first, _rest->getIterator(), false));
+        }
+
+
+        template<typename T>
+        inline Bool ConstructingIterable<T>::getHasLength() {
+            return _rest->getHasLength();
+        }
+
+
+        template<typename T>
+        inline Int ConstructingIterable<T>::getLength() {
+            return Int(1) + _rest->getLength();
+        }
+
+
+        template<typename T>
+        inline Bool ConstructingIterable<T>::getIsEmpty() {
+            return Bool(false);  // Always has at least one element
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterable<T>> ConstructingIterable<T>::getSelf() {
+            return this->shared_from_this();
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterable<T>> ConstructingIterable<T>::cons(T value) {
+            auto node = makePtr<ConstructingNode<T>>(value, _first);
+            return Ptr<Iterable<T>>(new ConstructingIterable<T>(node, _rest));
+        }
+
+
+
+        // C o n s t r u c t i n g I t e r a t o r
+        template<typename T>
+        inline ConstructingIterable<T>::ConstructingIterator::ConstructingIterator(Ptr<ConstructingNode<T>> first, Ptr<Iterator<T>> rest, Bool isValid)
+            : _first(first), _rest(rest), _isValid(isValid)
+        {
+        }
+
+
+        template<typename T>
+        inline T ConstructingIterable<T>::ConstructingIterator::getCurrent() {
+            if (_isValid) {
+                if (_first) {
+                    return _first->value;
+                } else {
+                    return _rest->getCurrent();
+                }
+            } else {
+                throw InvalidIteratorError();
+            }
+        }
+
+
+        template<typename T>
+        inline Bool ConstructingIterable<T>::ConstructingIterator::moveNext() {
+            if (!_isValid) {
+                // Already pointing at element
+                _isValid = true;
+                return true;
+            } else {
+                if (_first) {
+                    _first = _first->next;
+                    if (_first) {
+                        return true;
+                    } else {
+                        return _rest->moveNext();
+                    }
+                } else {
+                    return _rest->moveNext();
+                }
+            }
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterator<T>> ConstructingIterable<T>::ConstructingIterator::clone() {
+            return Ptr<Iterator<T>>(new ConstructingIterator(_first, _rest->clone(), _isValid));
+        }
+
+
+
+        // V e c t o r I t e r a b l e
+        template<typename T>
+        inline VectorIterable<T>::VectorIterable(std::vector<T>&& vector) : _vector(std::move(vector)) {
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterator<T>> VectorIterable<T>::getIterator() {
+            auto length = Int(_vector.size());
+            return Ptr<Iterator<T>>(new VectorIterator(this->shared_from_this(), -1, length));
+        }
+
+
+        template<typename T>
+        inline Bool VectorIterable<T>::getHasLength() {
+            return true;
+        }
+
+
+        template<typename T>
+        inline Int VectorIterable<T>::getLength() {
+            return Int(_vector.size());
+        }
+
+
+        template<typename T>
+        inline Bool VectorIterable<T>::getIsEmpty() {
+            return _vector.empty();
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterable<T>> VectorIterable<T>::getSelf() {
+            return this->shared_from_this();
+        }
+
+
+        template<typename T>
+        inline T VectorIterable<T>::operator[](Int index) {
+            return _vector[index];
+        }
+
+
+
+        // V e c t o r I t e r a t o r
+        template<typename T>
+        inline VectorIterable<T>::VectorIterator::VectorIterator(Ptr<VectorIterable<T>> iterable, Int index, Int length)
+            : _iterable(iterable), _index(index), _length(length)
+        {
+        }
+
+
+        template<typename T>
+        inline T VectorIterable<T>::VectorIterator::getCurrent() {
+            if (_index >= 0 && _index < _length) {
+                return (*_iterable)[_index];
+            } else {
+                throw InvalidIteratorError();
+            }
+        }
+
+
+        template<typename T>
+        inline Bool VectorIterable<T>::VectorIterator::moveNext() {
+            _index++;
+            if (_index >= _length) {
+                _index = _length;
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterator<T>> VectorIterable<T>::VectorIterator::clone() {
+            return Ptr<Iterator<T>>(new VectorIterator(_iterable, _index, _length));
+        }
     }
 
 
@@ -739,13 +996,6 @@ namespace ReLang {
         } else {
             return sortWith(Ptr<Function<Bool, T, T>>(new Utils::DescendingKeyComparator<K, T>(key)));
         }
-    }
-
-
-    template<typename T>
-    inline Ptr<Iterable<T>> IterableCommon<T>::sortWith(Ptr<Function<Bool, T, T>> comparator) {
-        // TODO: implement without accessing sort of ArrayList (endless loop)
-        throw NotImplementedError();
     }
 
 
@@ -903,6 +1153,13 @@ namespace ReLang {
     }
 
 
+    template<typename T>
+    inline Ptr<Iterable<T>> IterableCommon<T>::cons(T value) {
+        auto node = makePtr<Iterables::ConstructingNode<T>>(value);
+        return Ptr<Iterable<T>>(new Iterables::ConstructingIterable<T>(node, this->getSelf()));
+    }
+
+
 
     // Global functions
     template<typename Us, typename Vs>
@@ -922,6 +1179,26 @@ namespace ReLang {
 
 
 namespace ReLang {
+    template<typename T>
+    inline Ptr<Iterable<T>> IterableCommon<T>::sortWith(Ptr<Function<Bool, T, T>> comparator) {
+        auto vector = std::vector<T>();
+        if (getHasLength()) {
+            vector.reserve(getLength());
+        }
+
+        auto iterator = getIterator();
+        while (iterator->moveNext()) {
+            vector.push_back(iterator->getCurrent());
+        }
+
+        std::sort(vector.begin(), vector.end(), [comparator](T t1, T t2) {
+            return (*comparator)(t1, t2);
+        });
+
+        return Ptr<Iterable<T>>(new Iterables::VectorIterable<T>(std::move(vector)));
+    }
+
+
     template<typename T>
     inline Ptr<String> IterableCommon<T>::toString() {
         return Utils::join(L"::", this->getSelf(), L"", L"::[]");

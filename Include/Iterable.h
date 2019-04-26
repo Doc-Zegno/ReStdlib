@@ -86,6 +86,12 @@ namespace ReLang {
         template<typename R, typename Rs>
         Ptr<Iterable<R>> flatMap(Ptr<Function<Rs, T>> mapping);
 
+        template<Int dummy = 0>
+        Ptr<Iterable<Tuple<T, T>>> groupBy2();
+
+        template<Int dummy = 0>
+        Ptr<Iterable<Tuple<T, T>>> chainBy2();
+
         virtual Ptr<String> toString() override;
     };
 
@@ -402,6 +408,70 @@ namespace ReLang {
 
             virtual Ptr<Iterator<R>> getIterator() override;
             virtual Ptr<Iterable<R>> getSelf() override;
+        };
+
+
+
+        template<typename T>
+        class GroupingIterable : public Iterable<Tuple<T, T>>, public EnableSelf<GroupingIterable<T>> {
+        private:
+            class GroupingIterator : public Iterator<Tuple<T, T>> {
+            private:
+                Ptr<Iterator<T>> _iterator;
+                T _first;
+                T _second;
+                Bool _isValid;
+
+            public:
+                GroupingIterator(Ptr<Iterator<T>> iterator, T first = T(), T second = T(), Bool isValid = false);
+
+                virtual Tuple<T, T> getCurrent() override;
+                virtual Bool moveNext() override;
+                virtual Ptr<Iterator<Tuple<T, T>>> clone() override;
+            };
+
+
+            Ptr<Iterable<T>> _iterable;
+
+        public:
+            GroupingIterable(Ptr<Iterable<T>> iterable);
+
+            virtual Ptr<Iterator<Tuple<T, T>>> getIterator() override;
+            virtual Bool getHasLength() override;
+            virtual Int getLength() override;
+            virtual Ptr<Iterable<Tuple<T, T>>> getSelf() override;
+        };
+
+
+
+        template<typename T>
+        class ChainingIterable : public Iterable<Tuple<T, T>>, public EnableSelf<ChainingIterable<T>> {
+        private:
+            class ChainingIterator : public Iterator<Tuple<T, T>> {
+            private:
+                Ptr<Iterator<T>> _iterator;
+                T _previous;
+                T _next;
+                Bool _isValid;
+
+            public:
+                ChainingIterator(Ptr<Iterator<T>> iterator, T previous = T(), T next = T(), Bool isValid = false);
+
+                virtual Tuple<T, T> getCurrent() override;
+                virtual Bool moveNext() override;
+                virtual Ptr<Iterator<Tuple<T, T>>> clone() override;
+            };
+
+
+            Ptr<Iterable<T>> _iterable;
+
+        public:
+            ChainingIterable(Ptr<Iterable<T>> iterable);
+
+            virtual Ptr<Iterator<Tuple<T, T>>> getIterator() override;
+            virtual Bool getHasLength() override;
+            virtual Int getLength() override;
+            virtual Ptr<Iterable<Tuple<T, T>>> getSelf() override;
         };
 
 
@@ -1051,7 +1121,159 @@ namespace ReLang {
             auto innerClone = _innerIterator ? _innerIterator->clone() : Ptr<Iterator<R>>();
             return Ptr<Iterator<R>>(new FlatteningIterator(outerClone, innerClone));
         }
-}
+
+
+
+        // G r o u p i n g I t e r a b l e
+        template<typename T>
+        inline GroupingIterable<T>::GroupingIterable(Ptr<Iterable<T>> iterable) : _iterable(iterable) {
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterator<Tuple<T, T>>> GroupingIterable<T>::getIterator() {
+            return Ptr<Iterator<Tuple<T, T>>>(new GroupingIterator(_iterable->getIterator()));
+        }
+
+
+        template<typename T>
+        inline Bool GroupingIterable<T>::getHasLength() {
+            return _iterable->getHasLength();
+        }
+
+
+        template<typename T>
+        inline Int GroupingIterable<T>::getLength() {
+            return _iterable->getLength() / 2;
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterable<Tuple<T, T>>> GroupingIterable<T>::getSelf() {
+            return this->shared_from_this();
+        }
+
+
+
+        // G r o u p i n g I t e r a t o r
+        template<typename T>
+        inline GroupingIterable<T>::GroupingIterator::GroupingIterator(Ptr<Iterator<T>> iterator, T first, T second, Bool isValid)
+            : _iterator(iterator), _first(first), _second(second), _isValid(isValid)
+        {
+        }
+
+
+        template<typename T>
+        inline Tuple<T, T> GroupingIterable<T>::GroupingIterator::getCurrent() {
+            if (_isValid) {
+                return Tuple<T, T>(_first, _second);
+            } else {
+                throw InvalidIteratorError();
+            }
+        }
+
+
+        template<typename T>
+        inline Bool GroupingIterable<T>::GroupingIterator::moveNext() {
+            _isValid = true;
+            if (_iterator->moveNext()) {
+                _first = _iterator->getCurrent();
+                if (_iterator->moveNext()) {
+                    _second = _iterator->getCurrent();
+                    return true;
+                }
+            }
+            _isValid = false;
+            return false;
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterator<Tuple<T, T>>> GroupingIterable<T>::GroupingIterator::clone() {
+            return Ptr<Iterator<Tuple<T, T>>>(new GroupingIterator(_iterator->clone(), _first, _second, _isValid));
+        }
+
+
+
+        // C h a i n i n g I t e r a b l e
+        template<typename T>
+        inline ChainingIterable<T>::ChainingIterable(Ptr<Iterable<T>> iterable) : _iterable(iterable) {
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterator<Tuple<T, T>>> ChainingIterable<T>::getIterator() {
+            return Ptr<Iterator<Tuple<T, T>>>(new ChainingIterator(_iterable->getIterator()));
+        }
+
+
+        template<typename T>
+        inline Bool ChainingIterable<T>::getHasLength() {
+            return _iterable->getHasLength();
+        }
+
+
+        template<typename T>
+        inline Int ChainingIterable<T>::getLength() {
+            return std::max(0, _iterable->getLength() - 1);
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterable<Tuple<T, T>>> ChainingIterable<T>::getSelf() {
+            return this->shared_from_this();
+        }
+
+
+
+        // C h a i n i n g I t e r a t o r
+        template<typename T>
+        inline ChainingIterable<T>::ChainingIterator::ChainingIterator(Ptr<Iterator<T>> iterator, T previous, T next, Bool isValid)
+            : _iterator(iterator), _previous(previous), _next(next), _isValid(isValid)
+        {
+        }
+
+
+        template<typename T>
+        inline Tuple<T, T> ChainingIterable<T>::ChainingIterator::getCurrent() {
+            if (_isValid) {
+                return Tuple<T, T>(_previous, _next);
+            } else {
+                throw InvalidIteratorError();
+            }
+        }
+
+
+        template<typename T>
+        inline Bool ChainingIterable<T>::ChainingIterator::moveNext() {
+            if (_isValid) {
+                // Already has _previous and _next filled
+                if (_iterator->moveNext()) {
+                    _previous = _next;
+                    _next = _iterator->getCurrent();
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                // First move
+                if (_iterator->moveNext()) {
+                    _previous = _iterator->getCurrent();
+                    if (_iterator->moveNext()) {
+                        _next = _iterator->getCurrent();
+                        _isValid = true;
+                    }
+                }
+                return _isValid;
+            }
+        }
+
+
+        template<typename T>
+        inline Ptr<Iterator<Tuple<T, T>>> ChainingIterable<T>::ChainingIterator::clone() {
+            return Ptr<Iterator<Tuple<T, T>>>(new ChainingIterator(_iterator->clone(), _previous, _next, _isValid));
+        }
+    }
 
 
 
@@ -1141,6 +1363,20 @@ namespace ReLang {
     inline Ptr<Iterable<R>> IterableCommon<T>::flatMap(Ptr<Function<Rs, T>> mapping) {
         auto mapped = map(mapping);  // T* -> Rs*
         return Ptr<Iterable<R>>(new Iterables::FlatteningIterable<Rs, R>(mapped));
+    }
+
+
+    template<typename T>
+    template<Int dummy>
+    inline Ptr<Iterable<Tuple<T, T>>> IterableCommon<T>::groupBy2() {
+        return Ptr<Iterable<Tuple<T, T>>>(new Iterables::GroupingIterable<T>(this->getSelf()));
+    }
+
+
+    template<typename T>
+    template<Int dummy>
+    inline Ptr<Iterable<Tuple<T, T>>> IterableCommon<T>::chainBy2() {
+        return Ptr<Iterable<Tuple<T, T>>>(new Iterables::ChainingIterable<T>(this->getSelf()));
     }
 
 

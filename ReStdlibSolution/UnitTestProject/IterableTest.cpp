@@ -108,6 +108,24 @@ namespace UnitTestProject {
             // Flattening mapping
             auto flatMapped = numbers->take(3)->flatMap<Int>(Ptr<Function<Ptr<ArrayList<Int>>, Int>>(new ToSeriesFunction()));
             Assert::AreEqual(L"1::1::1::2::4::8::3::9::27::[]", flatMapped->toString()->getRaw().c_str());
+
+            // Grouping by 2
+            auto grouped = numbers->take(7)->groupBy2();
+            Assert::AreEqual(Int(3), grouped->getLength());
+            Assert::AreEqual(L"(1, 2)::(3, 4)::(5, 6)::[]", grouped->toString()->getRaw().c_str());
+
+            auto emptyGrouped = numbers->take(1)->groupBy2();
+            Assert::IsTrue(emptyGrouped->getIsEmpty());
+            Assert::AreEqual(Int(0), emptyGrouped->getLength());
+
+            // Chaining by 2
+            auto chained = numbers->take(5)->chainBy2();
+            Assert::AreEqual(Int(4), chained->getLength());
+            Assert::AreEqual(L"(1, 2)::(2, 3)::(3, 4)::(4, 5)::[]", chained->toString()->getRaw().c_str());
+
+            auto emptyChained = numbers->take(1)->chainBy2();
+            Assert::IsTrue(emptyChained->getIsEmpty());
+            Assert::AreEqual(Int(0), emptyChained->getLength());
         }
 
 

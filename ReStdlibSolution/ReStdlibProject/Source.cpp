@@ -166,6 +166,8 @@ int main() {
         printAll(L"Matrix:", matrix);
         printAll(L"Matrix.flatten():", matrix->flatten<Int>());
         printAll(L"List.take(3).flatMap():", list->take(3)->flatMap<Int>(Ptr<Function<Ptr<ArrayList<Int>>, Int>>(new ToSeriesFunction())));
+        printAll(L"List.groupBy2():", list->groupBy2());
+        printAll(L"List.chainBy2():", list->chainBy2());
 
         print(list->get(10));
     } catch (IndexError& e) {

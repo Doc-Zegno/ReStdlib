@@ -18,6 +18,14 @@ public:
 };
 
 
+class ToSeriesFunction : public Function<Ptr<ArrayList<Int>>, Int> {
+public:
+    virtual Ptr<ArrayList<Int>> operator()(Int x) override {
+        return makePtr<ArrayList<Int>>({ x, x * x, x * x * x });
+    }
+};
+
+
 class IsOddFunction : public Function<Bool, Int> {
 public:
     virtual Bool operator()(Int x) override {
@@ -145,6 +153,19 @@ int main() {
         printAll(L"Cons(9, 10, 8, mess):", consed);
         printAll(L"Cons(11, consed):", extended);
         printAll(L"Sorted extended:", extended->sort());
+        printAll(L"Extended.length:", extended->getLength());
+
+        auto matrix = makePtr<ArrayList<Ptr<ArrayList<Int>>>>({
+            makePtr<ArrayList<Int>>({ 0 }),
+            makePtr<ArrayList<Int>>(),
+            makePtr<ArrayList<Int>>({ 1, 2, 3 }),
+            makePtr<ArrayList<Int>>({ 4, 5, 6, 7 }),
+            makePtr<ArrayList<Int>>({ 8, 9 })
+        });
+
+        printAll(L"Matrix:", matrix);
+        printAll(L"Matrix.flatten():", matrix->flatten<Int>());
+        printAll(L"List.take(3).flatMap():", list->take(3)->flatMap<Int>(Ptr<Function<Ptr<ArrayList<Int>>, Int>>(new ToSeriesFunction())));
 
         print(list->get(10));
     } catch (IndexError& e) {

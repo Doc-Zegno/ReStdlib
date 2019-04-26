@@ -80,6 +80,12 @@ namespace ReLang {
 
         virtual Ptr<Iterable<T>> cons(T value);
 
+        template<typename R>
+        Ptr<Iterable<R>> flatten();
+
+        template<typename R, typename Rs>
+        Ptr<Iterable<R>> flatMap(Ptr<Function<Rs, T>> mapping);
+
         virtual Ptr<String> toString() override;
     };
 
@@ -90,6 +96,7 @@ namespace ReLang {
     class Iterable : public IterableCommon<T> {
 
     };
+
 
 
     namespace Iterables {
@@ -323,9 +330,10 @@ namespace ReLang {
 
             Ptr<ConstructingNode<T>> _first;
             Ptr<Iterable<T>> _rest;
+            Int _listLength;
 
         public:
-            ConstructingIterable(Ptr<ConstructingNode<T>> first, Ptr<Iterable<T>> rest);
+            ConstructingIterable(Ptr<ConstructingNode<T>> first, Ptr<Iterable<T>> rest, Int listLength);
 
             virtual Ptr<Iterator<T>> getIterator() override;
             virtual Bool getHasLength() override;
@@ -367,6 +375,33 @@ namespace ReLang {
             virtual Ptr<Iterable<T>> getSelf() override;
 
             T operator[](Int index);
+        };
+
+
+
+        template<typename T, typename R>
+        class FlatteningIterable : public Iterable<R>, public EnableSelf<FlatteningIterable<T, R>> {
+        private:
+            class FlatteningIterator : public Iterator<R> {
+            private:
+                Ptr<Iterator<T>> _outerIterator;
+                Ptr<Iterator<R>> _innerIterator;
+
+            public:
+                FlatteningIterator(Ptr<Iterator<T>> outerIterator, Ptr<Iterator<R>> innerIterator);
+
+                virtual R getCurrent() override;
+                virtual Bool moveNext() override;
+                virtual Ptr<Iterator<R>> clone() override;
+            };
+
+
+            Ptr<Iterable<T>> _iterable;
+        public:
+            FlatteningIterable(Ptr<Iterable<T>> iterable);
+
+            virtual Ptr<Iterator<R>> getIterator() override;
+            virtual Ptr<Iterable<R>> getSelf() override;
         };
 
 
@@ -777,8 +812,8 @@ namespace ReLang {
 
         // C o n s t r u c t i n g I t e r a b l e
         template<typename T>
-        inline ConstructingIterable<T>::ConstructingIterable(Ptr<ConstructingNode<T>> first, Ptr<Iterable<T>> rest)
-            : _first(first), _rest(rest)
+        inline ConstructingIterable<T>::ConstructingIterable(Ptr<ConstructingNode<T>> first, Ptr<Iterable<T>> rest, Int listLength)
+            : _first(first), _rest(rest), _listLength(listLength)
         {
         }
 
@@ -797,7 +832,7 @@ namespace ReLang {
 
         template<typename T>
         inline Int ConstructingIterable<T>::getLength() {
-            return Int(1) + _rest->getLength();
+            return _listLength + _rest->getLength();
         }
 
 
@@ -816,7 +851,7 @@ namespace ReLang {
         template<typename T>
         inline Ptr<Iterable<T>> ConstructingIterable<T>::cons(T value) {
             auto node = makePtr<ConstructingNode<T>>(value, _first);
-            return Ptr<Iterable<T>>(new ConstructingIterable<T>(node, _rest));
+            return Ptr<Iterable<T>>(new ConstructingIterable<T>(node, _rest, _listLength + 1));
         }
 
 
@@ -949,7 +984,74 @@ namespace ReLang {
         inline Ptr<Iterator<T>> VectorIterable<T>::VectorIterator::clone() {
             return Ptr<Iterator<T>>(new VectorIterator(_iterable, _index, _length));
         }
-    }
+
+
+
+        // F l a t t e n i n g I t e r a b l e
+        template<typename T, typename R>
+        inline FlatteningIterable<T, R>::FlatteningIterable(Ptr<Iterable<T>> iterable) : _iterable(iterable) {
+        }
+
+
+        template<typename T, typename R>
+        inline Ptr<Iterator<R>> FlatteningIterable<T, R>::getIterator() {
+            return Ptr<Iterator<R>>(new FlatteningIterator(_iterable->getIterator(), Ptr<Iterator<R>>()));
+        }
+
+
+        template<typename T, typename R>
+        inline Ptr<Iterable<R>> FlatteningIterable<T, R>::getSelf() {
+            return this->shared_from_this();
+        }
+
+
+
+        // F l a t t e n i n g I t e r a t o r
+        template<typename T, typename R>
+        inline FlatteningIterable<T, R>::FlatteningIterator::FlatteningIterator(Ptr<Iterator<T>> outerIterator, Ptr<Iterator<R>> innerIterator)
+            : _outerIterator(outerIterator), _innerIterator(innerIterator)
+        {
+        }
+
+
+        template<typename T, typename R>
+        inline R FlatteningIterable<T, R>::FlatteningIterator::getCurrent() {
+            if (_innerIterator) {
+                return _innerIterator->getCurrent();
+            } else {
+                throw InvalidIteratorError();
+            }
+        }
+
+
+        template<typename T, typename R>
+        inline Bool FlatteningIterable<T, R>::FlatteningIterator::moveNext() {
+            if (_innerIterator) {
+                if (_innerIterator->moveNext()) {
+                    return true;
+                } else {
+                    _innerIterator = Ptr<Iterator<R>>();
+                    return FlatteningIterator::moveNext();
+                }
+            } else {
+                // First move
+                if (_outerIterator->moveNext()) {
+                    _innerIterator = _outerIterator->getCurrent()->getIterator();
+                    return FlatteningIterator::moveNext();
+                } else {
+                    return false;
+                }
+            }
+        }
+
+
+        template<typename T, typename R>
+        inline Ptr<Iterator<R>> FlatteningIterable<T, R>::FlatteningIterator::clone() {
+            auto outerClone = _outerIterator->clone();
+            auto innerClone = _innerIterator ? _innerIterator->clone() : Ptr<Iterator<R>>();
+            return Ptr<Iterator<R>>(new FlatteningIterator(outerClone, innerClone));
+        }
+}
 
 
 
@@ -1024,6 +1126,21 @@ namespace ReLang {
     template<Int dummy>
     inline Tuple<T, Int> IterableCommon<T>::min() {
         return supremeWith(Ptr<Function<Bool, T, T>>(new Utils::DescendingComparator<T>()));
+    }
+
+
+    template<typename T>
+    template<typename R>
+    inline Ptr<Iterable<R>> IterableCommon<T>::flatten() {
+        return Ptr<Iterable<R>>(new Iterables::FlatteningIterable<T, R>(this->getSelf()));
+    }
+
+
+    template<typename T>
+    template<typename R, typename Rs>
+    inline Ptr<Iterable<R>> IterableCommon<T>::flatMap(Ptr<Function<Rs, T>> mapping) {
+        auto mapped = map(mapping);  // T* -> Rs*
+        return Ptr<Iterable<R>>(new Iterables::FlatteningIterable<Rs, R>(mapped));
     }
 
 
@@ -1156,7 +1273,7 @@ namespace ReLang {
     template<typename T>
     inline Ptr<Iterable<T>> IterableCommon<T>::cons(T value) {
         auto node = makePtr<Iterables::ConstructingNode<T>>(value);
-        return Ptr<Iterable<T>>(new Iterables::ConstructingIterable<T>(node, this->getSelf()));
+        return Ptr<Iterable<T>>(new Iterables::ConstructingIterable<T>(node, this->getSelf(), 1));
     }
 
 

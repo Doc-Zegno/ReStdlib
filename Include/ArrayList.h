@@ -32,6 +32,7 @@ namespace ReLang {
         std::vector<T> _vector;
 
     public:
+        ArrayList();
         ArrayList(Int number, T value);
         ArrayList(Ptr<Iterable<T>> items);
         ArrayList(std::vector<T>&& vector);
@@ -110,6 +111,11 @@ namespace ReLang {
 
 namespace ReLang {
     // A r r a y L i s t
+    template<typename T>
+    inline ArrayList<T>::ArrayList() : _vector() {
+    }
+
+
     template<typename T>
     inline ArrayList<T>::ArrayList(Int number, T value) : _vector(number, value) {
     }

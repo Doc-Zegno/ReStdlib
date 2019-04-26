@@ -27,6 +27,14 @@ namespace UnitTestProject {
         };
 
 
+        class ToSeriesFunction : public Function<Ptr<ArrayList<Int>>, Int> {
+        public:
+            virtual Ptr<ArrayList<Int>> operator()(Int x) override {
+                return makePtr<ArrayList<Int>>({ x, x * x, x * x * x });
+            }
+        };
+
+
     public:
         TEST_METHOD(BasicFunctionality) {
             auto numbers = Ptr<List<Int>>(new ArrayList<Int>({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }));
@@ -85,6 +93,21 @@ namespace UnitTestProject {
             auto consed = messed->cons(Int(8))->cons(Int(9));
             Assert::AreEqual(L"9::8::3::4::1::7::2::6::5::[]", consed->toString()->getRaw().c_str());
             Assert::AreEqual(L"1::2::3::4::5::6::7::8::9::[]", consed->sort()->toString()->getRaw().c_str());
+            Assert::AreEqual(Int(9), consed->getLength());
+
+            // Flatten
+            auto matrix = makePtr<ArrayList<Ptr<ArrayList<Int>>>>({
+                makePtr<ArrayList<Int>>({ 0 }),
+                makePtr<ArrayList<Int>>(),
+                makePtr<ArrayList<Int>>({ 1, 2, 3 }),
+                makePtr<ArrayList<Int>>({ 4, 5, 6, 7 }),
+                makePtr<ArrayList<Int>>({ 8, 9 })
+            });
+            Assert::AreEqual(L"0::1::2::3::4::5::6::7::8::9::[]", matrix->flatten<Int>()->toString()->getRaw().c_str());
+
+            // Flattening mapping
+            auto flatMapped = numbers->take(3)->flatMap<Int>(Ptr<Function<Ptr<ArrayList<Int>>, Int>>(new ToSeriesFunction()));
+            Assert::AreEqual(L"1::1::1::2::4::8::3::9::27::[]", flatMapped->toString()->getRaw().c_str());
         }
 
 

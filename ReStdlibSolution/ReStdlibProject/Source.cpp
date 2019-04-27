@@ -169,6 +169,14 @@ int main() {
         printAll(L"List.groupBy2():", list->groupBy2());
         printAll(L"List.chainBy2():", list->chainBy2());
 
+        matrix->get(0)->insertAt(-1, Int(1));
+        matrix->get(1)->resize(5);
+        matrix->get(2)->add(Int(2));
+        matrix->get(2)->removeAt(1);
+        matrix->get(3)->addAll(makePtr<ArrayList<Int>>({ 6, 5, 4 }));
+        matrix->get(4)->clear();
+        printAll(L"Matrix:", matrix);
+
         print(list->get(10));
     } catch (IndexError& e) {
         print(e.getMessage());

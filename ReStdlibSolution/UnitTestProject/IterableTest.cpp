@@ -135,6 +135,11 @@ namespace UnitTestProject {
             auto ys = Ptr<List<Int>>(new ArrayList<Int>({ 11, 12, 13, 14, 15 }));
             xs->zipInPlace(ys, Ptr<Function<Int, Int, Int>>(new SumTwoIntsReducer()));
             Assert::AreEqual(L"[12, 14, 16, 18, 20]", xs->toString()->getRaw().c_str());
+
+            // Sorting in place
+            auto mess = makePtr<ArrayList<Int>>({ 3, 4, 1, 5, 2 });
+            mess->sortInPlace();
+            Assert::AreEqual(L"[1, 2, 3, 4, 5]", mess->toString()->getRaw().c_str());
         }
     };
 }

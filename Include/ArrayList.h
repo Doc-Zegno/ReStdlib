@@ -53,6 +53,13 @@ namespace ReLang {
         virtual Bool getHasLength() override;
         virtual Bool getIsEmpty() override;
         virtual Ptr<Iterable<T>> sortWith(Ptr<Function<Bool, T, T>> comparator) override;
+        virtual void sortWithInPlace(Ptr<Function<Bool, T, T>> comparator) override;
+        virtual void add(T value);
+        virtual void addAll(Ptr<Iterable<T>> values);
+        virtual void insertAt(Int index, T value);
+        virtual void removeAt(Int index);
+        virtual void clear();
+        virtual void resize(Int size, T value = T());
         virtual Ptr<Iterable<T>> getSelf() override;
 
         T& operator[](Int index);
@@ -275,6 +282,69 @@ namespace ReLang {
             return (*comparator)(t1, t2);
         });
         return Ptr<Iterable<T>>(new ArrayList<T>(std::move(copy)));
+    }
+
+
+    template<typename T>
+    inline void ArrayList<T>::sortWithInPlace(Ptr<Function<Bool, T, T>> comparator) {
+        std::sort(_vector.begin(), _vector.end(), [comparator](T t1, T t2) {
+            return (*comparator)(t1, t2);
+        });
+    }
+
+
+    template<typename T>
+    inline void ArrayList<T>::add(T value) {
+        _vector.push_back(value);
+    }
+
+
+    template<typename T>
+    inline void ArrayList<T>::addAll(Ptr<Iterable<T>> values) {
+        if (values->getHasLength()) {
+            auto numAdded = values->getLength();
+            auto newLength = Int(_vector.size()) + numAdded;
+            _vector.reserve(newLength);
+        }
+
+        auto iterator = values->getIterator();
+        while (iterator->moveNext()) {
+            _vector.push_back(iterator->getCurrent());
+        }
+    }
+
+
+    template<typename T>
+    inline void ArrayList<T>::insertAt(Int index, T value) {
+        auto length = Int(_vector.size());
+        auto translatedIndex = Utils::translateIndex(index, length);
+        auto iterator = _vector.begin() + translatedIndex;
+        _vector.insert(iterator, value);
+    }
+
+
+    template<typename T>
+    inline void ArrayList<T>::removeAt(Int index) {
+        auto length = Int(_vector.size());
+        auto translatedIndex = Utils::translateIndex(index, length);
+        auto iterator = _vector.begin() + translatedIndex;
+        _vector.erase(iterator);
+    }
+
+
+    template<typename T>
+    inline void ArrayList<T>::clear() {
+        _vector.clear();
+    }
+
+
+    template<typename T>
+    inline void ArrayList<T>::resize(Int size, T value) {
+        if (size >= 0) {
+            _vector.resize(size, value);
+        } else {
+            throw ValueError(L"New size should be non-negative");
+        }
     }
 
 

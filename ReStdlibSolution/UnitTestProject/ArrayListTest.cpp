@@ -61,6 +61,41 @@ namespace UnitTestProject {
 		}
 
 
+        TEST_METHOD(MutatingFunctionality) {
+            auto numbers = makePtr<ArrayList<Int>>({ 1, 2, 3, 4, 5 });
+            
+            // Add
+            numbers->add(Int(6));
+            Assert::AreEqual(L"[1, 2, 3, 4, 5, 6]", numbers->toString()->getRaw().c_str());
+
+            // AddAll
+            numbers->addAll(makePtr<ArrayList<Int>>({ 7, 8, 9 }));
+            Assert::AreEqual(L"[1, 2, 3, 4, 5, 6, 7, 8, 9]", numbers->toString()->getRaw().c_str());
+
+            // InsertAt
+            numbers->insertAt(-3, Int(10));
+            Assert::AreEqual(L"[1, 2, 3, 4, 5, 6, 10, 7, 8, 9]", numbers->toString()->getRaw().c_str());
+
+            // RemoveAt
+            numbers->removeAt(-4);
+            Assert::AreEqual(L"[1, 2, 3, 4, 5, 6, 7, 8, 9]", numbers->toString()->getRaw().c_str());
+
+            // Resize
+            numbers->resize(5);
+            Assert::AreEqual(L"[1, 2, 3, 4, 5]", numbers->toString()->getRaw().c_str());
+            numbers->resize(7, Int(6));
+            Assert::AreEqual(L"[1, 2, 3, 4, 5, 6, 6]", numbers->toString()->getRaw().c_str());
+
+            // Set
+            numbers->set(-1, Int(7));
+            Assert::AreEqual(L"[1, 2, 3, 4, 5, 6, 7]", numbers->toString()->getRaw().c_str());
+
+            // Clear
+            numbers->clear();
+            Assert::IsTrue(numbers->getIsEmpty());
+        }
+
+
         TEST_METHOD(SliceBasicFunctionality) {
             auto numbers = Ptr<List<Int>>(new ArrayList<Int>({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }));
             auto evens = numbers->getSlice(1, 10, 2);

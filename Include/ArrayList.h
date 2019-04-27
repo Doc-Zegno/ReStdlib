@@ -48,6 +48,7 @@ namespace ReLang {
         virtual T get(Int index) override;
         virtual void set(Int index, T value) override;
         virtual Ptr<List<T>> getSlice(Int start, Int end, Int step) override;
+        virtual Ptr<MutableList<T>> getMutableSlice(Int start, Int end, Int step) override;
         virtual Ptr<Iterable<Int>> getIndices() override;
         virtual Int getLength() override;
         virtual Bool getHasLength() override;
@@ -68,9 +69,9 @@ namespace ReLang {
 
 
     template<typename T>
-    class ArrayListSlice : public List<T>, public EnableSelf<ArrayListSlice<T>> {
+    class ArrayListSlice : public MutableList<T>, public EnableSelf<ArrayListSlice<T>> {
     private:
-        class ArrayListSliceIterator : public Iterator<T> {
+        class ArrayListSliceIterator : public MutatingIterator<T> {
         private:
             Ptr<ArrayListSlice> _slice;
             Int _index;
@@ -80,6 +81,7 @@ namespace ReLang {
             ArrayListSliceIterator(Ptr<ArrayListSlice> slice, Int index = -1);
 
             virtual T getCurrent() override;
+            virtual void setCurrent(T value) override;
             virtual Bool moveNext() override;
             virtual Ptr<Iterator<T>> clone() override;
         };
@@ -95,20 +97,29 @@ namespace ReLang {
         ArrayListSlice(Ptr<ArrayList<T>> list, Int start, Int end, Int step);
 
         virtual Ptr<Iterator<T>> getIterator() override;
+        virtual Ptr<MutatingIterator<T>> getMutatingIterator() override;
         virtual Ptr<Iterable<T>> take(Int number) override;
         virtual Ptr<Iterable<T>> skip(Int number) override;
         virtual T getFirst() override;
         virtual T getLast() override;
         virtual Ptr<Iterable<T>> getRest() override;
         virtual T get(Int index) override;
+        virtual void set(Int index, T value) override;
         virtual Ptr<List<T>> getSlice(Int start, Int end, Int step) override;
+        virtual Ptr<MutableList<T>> getMutableSlice(Int start, Int end, Int step) override;
         virtual Ptr<Iterable<Int>> getIndices() override;
         virtual Int getLength() override;
         virtual Bool getHasLength() override;
         virtual Bool getIsEmpty() override;
+        virtual void add(T value);
+        virtual void addAll(Ptr<Iterable<T>> values);
+        virtual void insertAt(Int index, T value);
+        virtual void removeAt(Int index);
+        virtual void clear();
+        virtual void resize(Int size, T value = T());
         virtual Ptr<Iterable<T>> getSelf() override;
 
-        T operator[](Int index);
+        T& operator[](Int index);
     };
 }
 
@@ -240,13 +251,19 @@ namespace ReLang {
 
     template<typename T>
     inline Ptr<List<T>> ArrayList<T>::getSlice(Int start, Int end, Int step) {
+        return ArrayList<T>::getMutableSlice(start, end, step);
+    }
+
+
+    template<typename T>
+    inline Ptr<MutableList<T>> ArrayList<T>::getMutableSlice(Int start, Int end, Int step) {
         auto length = Int(_vector.size());
         auto translatedStart = start == length ? start : Utils::translateIndex(start, length);
         auto translatedEnd = end == length ? end : Utils::translateIndex(end, length);
         if (translatedEnd < translatedStart) {
             translatedEnd = translatedStart;
         }
-        return Ptr<List<T>>(new ArrayListSlice<T>(this->shared_from_this(), translatedStart, translatedEnd, step));
+        return Ptr<MutableList<T>>(new ArrayListSlice<T>(this->shared_from_this(), translatedStart, translatedEnd, step));
     }
 
 
@@ -431,6 +448,12 @@ namespace ReLang {
 
 
     template<typename T>
+    inline Ptr<MutatingIterator<T>> ArrayListSlice<T>::getMutatingIterator() {
+        return Ptr<MutatingIterator<T>>(new ArrayListSliceIterator(this->shared_from_this()));
+    }
+
+
+    template<typename T>
     inline Ptr<Iterable<T>> ArrayListSlice<T>::take(Int number) {
         if (number >= 0) {
             auto translatedNumber = std::min(number, _length);  // Can't take more than actually exist
@@ -490,13 +513,25 @@ namespace ReLang {
 
 
     template<typename T>
+    inline void ArrayListSlice<T>::set(Int index, T value) {
+        (*this)[index] = value;
+    }
+
+
+    template<typename T>
     inline Ptr<List<T>> ArrayListSlice<T>::getSlice(Int start, Int end, Int step) {
+        return ArrayListSlice<T>::getMutableSlice(start, end, step);
+    }
+
+
+    template<typename T>
+    inline Ptr<MutableList<T>> ArrayListSlice<T>::getMutableSlice(Int start, Int end, Int step) {
         auto translatedStart = start == _length ? start : Utils::translateIndex(start, _length);
         auto translatedEnd = end == _length ? end : Utils::translateIndex(end, _length);
         if (translatedEnd < translatedStart) {
             translatedEnd = translatedStart;
         }
-        return Ptr<List<T>>(new ArrayListSlice<T>(_list, _start + translatedStart * _step, _start + translatedEnd * _step, _step * step));
+        return Ptr<MutableList<T>>(new ArrayListSlice<T>(_list, _start + translatedStart * _step, _start + translatedEnd * _step, _step * step));
     }
 
 
@@ -525,13 +560,49 @@ namespace ReLang {
 
 
     template<typename T>
+    inline void ArrayListSlice<T>::add(T value) {
+        throw NotSupportedError(L"Slices don't support method .add()");
+    }
+
+
+    template<typename T>
+    inline void ArrayListSlice<T>::addAll(Ptr<Iterable<T>> values) {
+        throw NotSupportedError(L"Slices don't support method .addAll()");
+    }
+
+
+    template<typename T>
+    inline void ArrayListSlice<T>::insertAt(Int index, T value) {
+        throw NotSupportedError(L"Slices don't support method .insertAt()");
+    }
+
+
+    template<typename T>
+    inline void ArrayListSlice<T>::removeAt(Int index) {
+        throw NotSupportedError(L"Slices don't support method .removeAt()");
+    }
+
+
+    template<typename T>
+    inline void ArrayListSlice<T>::clear() {
+        throw NotSupportedError(L"Slices don't support method .clear()");
+    }
+
+
+    template<typename T>
+    inline void ArrayListSlice<T>::resize(Int size, T value) {
+        throw NotSupportedError(L"Slices don't support method .resize()");
+    }
+
+
+    template<typename T>
     inline Ptr<Iterable<T>> ArrayListSlice<T>::getSelf() {
         return this->shared_from_this();
     }
 
 
     template<typename T>
-    inline T ArrayListSlice<T>::operator[](Int index) {
+    inline T& ArrayListSlice<T>::operator[](Int index) {
         auto translatedIndex = Utils::translateIndex(index, _length);
         return (*_list)[_start + translatedIndex * _step];
     }
@@ -550,6 +621,16 @@ namespace ReLang {
     inline T ArrayListSlice<T>::ArrayListSliceIterator::getCurrent() {
         if (_index >= 0 && _index < _maximumIndex) {
             return (*_slice)[_index];
+        } else {
+            throw InvalidIteratorError();
+        }
+    }
+
+
+    template<typename T>
+    inline void ArrayListSlice<T>::ArrayListSliceIterator::setCurrent(T value) {
+        if (_index >= 0 && _index < _maximumIndex) {
+            (*_slice)[_index] = value;
         } else {
             throw InvalidIteratorError();
         }

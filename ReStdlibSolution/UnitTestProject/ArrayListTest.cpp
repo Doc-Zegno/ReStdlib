@@ -146,5 +146,13 @@ namespace UnitTestProject {
             Assert::AreEqual(Int(0), empty->getLength());
         }
 
+
+        TEST_METHOD(SliceMutatingFunctionality) {
+            auto numbers = Ptr<MutableList<Int>>(new ArrayList<Int>({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }));
+            auto evens = numbers->getMutableSlice(1, 10, 2);
+            evens->set(0, Int(-2));
+            Assert::AreEqual(L"[-2, 4, 6, 8, 10]", evens->toString()->getRaw().c_str());
+        }
+
 	};
 }

@@ -100,7 +100,6 @@ namespace ReLang {
     // Specializations
     template<typename T>
     class Iterable : public IterableCommon<T> {
-
     };
 
 
@@ -403,6 +402,7 @@ namespace ReLang {
 
 
             Ptr<Iterable<T>> _iterable;
+
         public:
             FlatteningIterable(Ptr<Iterable<T>> iterable);
 

@@ -8,6 +8,8 @@ namespace ReLang {
     template<typename T>
     class MutableList : public List<T>, public MutableIterable<T> {
     public:
+        virtual Ptr<MutableList<T>> getMutableSlice(Int start, Int end, Int step) = 0;
+
         virtual void set(Int index, T value) = 0;
         virtual void add(T value) = 0;
         virtual void addAll(Ptr<Iterable<T>> values) = 0;

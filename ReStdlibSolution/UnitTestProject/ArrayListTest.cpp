@@ -58,6 +58,16 @@ namespace UnitTestProject {
             // The same for empty one
             Assert::AreEqual(Bool(true), empty->getIsEmpty());
             Assert::AreEqual(Int(0), empty->getLength());
+
+            // Equality tests
+            auto xs = makePtr<ArrayList<Int>>({ 1, 2, 3, 4, 5 });
+            auto ys = makePtr<ArrayList<Int>>({ 1, 2, 3, 4, 6 });
+            auto zs = makePtr<ArrayList<Int>>({ 1, 2, 3, 4, 5, 6 });
+            auto ws = makePtr<ArrayList<Int>>({ 1, 2, 3, 4, 5 });
+            Assert::IsTrue((*xs) == xs);
+            Assert::IsFalse((*xs) == ys);
+            Assert::IsFalse((*xs) == zs);
+            Assert::IsTrue((*xs) == ws);
 		}
 
 

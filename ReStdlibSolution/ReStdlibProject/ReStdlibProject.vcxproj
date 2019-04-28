@@ -140,6 +140,7 @@
     <ClInclude Include="..\..\Include\Any.h" />
     <ClInclude Include="..\..\Include\ArrayList.h" />
     <ClInclude Include="..\..\Include\Cloneable.h" />
+    <ClInclude Include="..\..\Include\Equatable.h" />
     <ClInclude Include="..\..\Include\Error.h" />
     <ClInclude Include="..\..\Include\Errors.h" />
     <ClInclude Include="..\..\Include\Function.h" />
@@ -155,9 +156,11 @@
     <ClInclude Include="..\..\Include\Range.h" />
     <ClInclude Include="..\..\Include\SelfReferencing.h" />
     <ClInclude Include="..\..\Include\BasicString.h" />
+    <ClInclude Include="..\..\Include\Set.h" />
     <ClInclude Include="..\..\Include\Tuple.h" />
     <ClInclude Include="..\..\Include\Utils\FunctionUtils.h" />
     <ClInclude Include="..\..\Include\Utils\IterableUtils.h" />
+    <ClInclude Include="..\..\Include\Utils\OperatorUtils.h" />
     <ClInclude Include="..\..\Include\Utils\StringUtils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

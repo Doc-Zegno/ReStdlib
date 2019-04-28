@@ -169,6 +169,15 @@ namespace ReLang {
     }
 
 
+    Bool String::operator==(Ptr<String> other) {
+        if (other) {
+            return _raw == other->_raw;
+        } else {
+            return false;
+        }
+    }
+
+
     Ptr<String> String::toString() {
         return this->shared_from_this();
     }

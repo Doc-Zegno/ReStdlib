@@ -126,6 +126,10 @@ namespace UnitTestProject {
             auto emptyChained = numbers->take(1)->chainBy2();
             Assert::IsTrue(emptyChained->getIsEmpty());
             Assert::AreEqual(Int(0), emptyChained->getLength());
+
+            // Contains
+            Assert::IsTrue(numbers->contains(Int(10)));
+            Assert::IsFalse(numbers->contains(Int(11)));
         }
 
 

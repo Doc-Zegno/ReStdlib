@@ -7,7 +7,7 @@
 
 
 namespace ReLang {
-    class String : public List<Char>, public EnableSelf<String> {
+    class String : public List<Char>, public EnableSelf<String>, public Equatable<String> {
     private:
         std::wstring _raw;
 
@@ -43,6 +43,8 @@ namespace ReLang {
         virtual Ptr<List<Char>> getSlice(Int start, Int end, Int step) override;
 
         inline Ptr<Iterable<Int>> getIndices() override;
+
+        virtual Bool operator==(Ptr<String> other) override;
 
         virtual Ptr<String> toString() override;
 

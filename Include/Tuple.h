@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "Utils/OperatorUtils.h"
+
 
 namespace ReLang {
     template<typename T1, typename T2>
@@ -20,6 +22,10 @@ namespace ReLang {
 
         T2 getSecond() {
             return _t2;
+        }
+
+        Bool operator==(Tuple<T1, T2> other) {
+            return Utils::equals(_t1, other._t1) && Utils::equals(_t2, other._t2);
         }
 
         // TODO: implement .toString()

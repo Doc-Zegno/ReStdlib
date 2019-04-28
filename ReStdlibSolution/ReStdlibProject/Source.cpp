@@ -177,6 +177,15 @@ int main() {
         matrix->get(4)->clear();
         printAll(L"Matrix:", matrix);
 
+        auto xs = makePtr<ArrayList<Int>>({ 1, 2, 3, 4, 5 });
+        auto ys = makePtr<ArrayList<Int>>({ 1, 2, 3, 4, 6 });
+        auto zs = makePtr<ArrayList<Int>>({ 1, 2, 3, 4, 5, 6 });
+        auto ws = makePtr<ArrayList<Int>>({ 1, 2, 3, 4, 5 });
+        printAll(L"xs == xs:", (*xs) == xs);
+        printAll(L"xs == ys:", (*xs) == ys);
+        printAll(L"xs == zs:", (*xs) == zs);
+        printAll(L"xs == ws:", (*xs) == ws);
+
         print(list->get(10));
     } catch (IndexError& e) {
         print(e.getMessage());

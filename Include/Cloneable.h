@@ -1,11 +1,9 @@
 #pragma once
 
-#include "Any.h"
-
 
 namespace ReLang {
     template<typename T>
-    class Cloneable : public Any {
+    class Cloneable {
     public:
         virtual Ptr<T> clone() = 0;
     };

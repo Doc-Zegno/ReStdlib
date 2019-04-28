@@ -99,6 +99,15 @@
     <ClInclude Include="..\..\Include\Utils\OperatorUtils.h">
       <Filter>Файлы заголовков\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Include\MutableSet.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\HashSet.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\Utils\HashUtils.h">
+      <Filter>Файлы заголовков\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">

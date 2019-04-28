@@ -24,5 +24,13 @@ namespace ReLang {
                 }
             }
         }
+
+
+        template<typename T>
+        struct EqualityComparator {
+            Bool operator()(T t1, T t2) const {
+                return equals(t1, t2);
+            }
+        };
     }
 }

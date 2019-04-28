@@ -144,11 +144,13 @@
     <ClInclude Include="..\..\Include\Error.h" />
     <ClInclude Include="..\..\Include\Errors.h" />
     <ClInclude Include="..\..\Include\Function.h" />
+    <ClInclude Include="..\..\Include\HashSet.h" />
     <ClInclude Include="..\..\Include\Iterable.h" />
     <ClInclude Include="..\..\Include\Iterator.h" />
     <ClInclude Include="..\..\Include\List.h" />
     <ClInclude Include="..\..\Include\MutableIterable.h" />
     <ClInclude Include="..\..\Include\MutableList.h" />
+    <ClInclude Include="..\..\Include\MutableSet.h" />
     <ClInclude Include="..\..\Include\MutatingIterator.h" />
     <ClInclude Include="..\..\Include\Primitives.h" />
     <ClInclude Include="..\..\Include\Print.h" />
@@ -159,6 +161,7 @@
     <ClInclude Include="..\..\Include\Set.h" />
     <ClInclude Include="..\..\Include\Tuple.h" />
     <ClInclude Include="..\..\Include\Utils\FunctionUtils.h" />
+    <ClInclude Include="..\..\Include\Utils\HashUtils.h" />
     <ClInclude Include="..\..\Include\Utils\IterableUtils.h" />
     <ClInclude Include="..\..\Include\Utils\OperatorUtils.h" />
     <ClInclude Include="..\..\Include\Utils\StringUtils.h" />

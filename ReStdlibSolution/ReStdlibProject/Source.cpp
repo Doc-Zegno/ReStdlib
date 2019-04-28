@@ -3,6 +3,7 @@
 
 #include "Errors.h"
 #include "ArrayList.h"
+#include "HashSet.h"
 #include "Range.h"
 #include "BasicString.h"
 #include "Print.h"
@@ -185,6 +186,22 @@ int main() {
         printAll(L"xs == ys:", (*xs) == ys);
         printAll(L"xs == zs:", (*xs) == zs);
         printAll(L"xs == ws:", (*xs) == ws);
+
+        auto set = makePtr<HashSet<Int>>({ 1, 2, 3, 1, 2, 4, 5, 6, 6, 7, 4 });
+        auto anotherSet = makePtr<HashSet<Int>>({ 1, 3, 5, 7, 9, 11 });
+        printAll(L"Set:", set);
+        printAll(L"Another set:", anotherSet);
+        printAll(L"Union:", set->unioned(anotherSet));
+        printAll(L"Intersection:", set->intersection(anotherSet));
+        printAll(L"Difference:", set->difference(anotherSet));
+        set->add(Int(11));
+        printAll(L"Add:", set);
+        set->addAll(list);
+        printAll(L"AddAll:", set);
+        set->remove(Int(1));
+        printAll(L"Remove:", set);
+        set->removeAll(list);
+        printAll(L"RemoveAll:", set);
 
         print(list->get(10));
     } catch (IndexError& e) {

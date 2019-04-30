@@ -144,12 +144,15 @@
     <ClInclude Include="..\..\Include\Error.h" />
     <ClInclude Include="..\..\Include\Errors.h" />
     <ClInclude Include="..\..\Include\Function.h" />
+    <ClInclude Include="..\..\Include\HashMap.h" />
     <ClInclude Include="..\..\Include\HashSet.h" />
     <ClInclude Include="..\..\Include\Iterable.h" />
     <ClInclude Include="..\..\Include\Iterator.h" />
     <ClInclude Include="..\..\Include\List.h" />
+    <ClInclude Include="..\..\Include\Map.h" />
     <ClInclude Include="..\..\Include\MutableIterable.h" />
     <ClInclude Include="..\..\Include\MutableList.h" />
+    <ClInclude Include="..\..\Include\MutableMap.h" />
     <ClInclude Include="..\..\Include\MutableSet.h" />
     <ClInclude Include="..\..\Include\MutatingIterator.h" />
     <ClInclude Include="..\..\Include\Primitives.h" />

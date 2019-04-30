@@ -66,4 +66,16 @@ namespace ReLang {
         : Error(message ? message : makePtr<String>(L"Invalid value was provided"))
     {
     }
+
+
+    KeyError::KeyError(const Char* message)
+        : Error(message ? makePtr<String>(message) : makePtr<String>(L"No such key"))
+    {
+    }
+
+
+    KeyError::KeyError(Ptr<String> message)
+        : Error(message ? message : makePtr<String>(L"No such key"))
+    {
+    }
 }

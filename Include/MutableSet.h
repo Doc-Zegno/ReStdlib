@@ -12,6 +12,7 @@ namespace ReLang {
         virtual void addAll(Ptr<Iterable<T>> values) = 0;
         virtual void remove(T value) = 0;
         virtual void removeAll(Ptr<Iterable<T>> values) = 0;
+        virtual void clear() = 0;
 
         virtual Ptr<String> toString() override;
     };

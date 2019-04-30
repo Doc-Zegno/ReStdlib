@@ -4,6 +4,7 @@
 #include "Errors.h"
 #include "ArrayList.h"
 #include "HashSet.h"
+#include "HashMap.h"
 #include "Range.h"
 #include "BasicString.h"
 #include "Print.h"
@@ -202,6 +203,9 @@ int main() {
         printAll(L"Remove:", set);
         set->removeAll(list);
         printAll(L"RemoveAll:", set);
+
+        auto map = makePtr<HashMap<Int, Int>>({ Tuple<Int, Int>(1, 2), Tuple<Int, Int>(3, 4), Tuple<Int, Int>(5, 6) });
+        printAll(L"Map:", map);
 
         print(list->get(10));
     } catch (IndexError& e) {

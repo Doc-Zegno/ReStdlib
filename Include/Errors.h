@@ -43,4 +43,11 @@ namespace ReLang {
         ValueError(const Char* message);
         ValueError(Ptr<String> message);
     };
+
+
+    class KeyError : public Error {
+    public:
+        KeyError(const Char* message);
+        KeyError(Ptr<String> message = Ptr<String>());
+    };
 }

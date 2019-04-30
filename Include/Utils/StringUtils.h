@@ -51,6 +51,27 @@ namespace ReLang {
         }
 
 
+        template<typename U, typename V>
+        Ptr<String> joinPairs(const Char* separator, Ptr<Iterable<Tuple<U, V>>> pairs, const Char* prefix = L"", const Char* suffix = L"") {
+            auto builder = std::wostringstream();
+            builder << prefix;
+            auto iterator = pairs->getIterator();
+            auto isFirst = true;
+            while (iterator->moveNext()) {
+                auto pair = iterator->getCurrent();
+                if (!isFirst) {
+                    builder << separator;
+                }
+                appendToBuilder(builder, pair.getFirst());
+                builder << L": ";
+                appendToBuilder(builder, pair.getSecond());
+                isFirst = false;
+            }
+            builder << suffix;
+            return makeStringFromBuilder(builder);
+        }
+
+
         /// <summary>
         /// Provides functionality for building formatted strings
         /// </summary>

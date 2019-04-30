@@ -44,6 +44,10 @@ namespace ReLang {
         virtual Ptr<Iterable<T>> getSelf() override;
         virtual Ptr<Iterator<T>> getIterator() override;
         virtual Ptr<MutatingIterator<T>> getMutatingIterator() override;
+        virtual Bool contains(T value) override;
+        virtual Bool getIsEmpty() override;
+        virtual Bool getHasLength() override;
+        virtual Int getLength() override;
 
         virtual Ptr<Set<T>> unioned(Ptr<Iterable<T>> items) override;
         virtual Ptr<Set<T>> intersection(Ptr<Iterable<T>> items) override;
@@ -53,7 +57,22 @@ namespace ReLang {
         virtual void addAll(Ptr<Iterable<T>> values) override;
         virtual void remove(T value) override;
         virtual void removeAll(Ptr<Iterable<T>> values) override;
+        virtual void clear() override;
     };
+
+
+
+    // G l o b a l    F u n c t i o n s
+    template<typename T, typename ...TArgs>
+    inline Ptr<HashSet<T>> makeSet(TArgs&& ...args) {
+        return makePtr<HashSet<T>>(std::forward<TArgs>(args)...);
+    }
+
+
+    template<typename T>
+    inline Ptr<HashSet<T>> makeSet(std::initializer_list<T> list) {
+        return makePtr<HashSet<T>>(list);
+    }
 
 
 
@@ -105,6 +124,30 @@ namespace ReLang {
     template<typename T>
     inline Ptr<MutatingIterator<T>> HashSet<T>::getMutatingIterator() {
         return makePtr<HashSetIterator>(_set.begin(), _set.end(), false, false);
+    }
+
+
+    template<typename T>
+    inline Bool HashSet<T>::contains(T value) {
+        return _set.find(value) != _set.end();
+    }
+
+
+    template<typename T>
+    inline Bool HashSet<T>::getIsEmpty() {
+        return _set.empty();
+    }
+
+
+    template<typename T>
+    inline Bool HashSet<T>::getHasLength() {
+        return true;
+    }
+
+
+    template<typename T>
+    inline Int HashSet<T>::getLength() {
+        return Int(_set.size());
     }
 
 
@@ -179,6 +222,12 @@ namespace ReLang {
         while (iterator->moveNext()) {
             _set.erase(iterator->getCurrent());
         }
+    }
+
+
+    template<typename T>
+    inline void HashSet<T>::clear() {
+        _set.clear();
     }
 
 

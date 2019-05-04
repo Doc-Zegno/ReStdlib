@@ -16,7 +16,7 @@ namespace ReLang {
         using InternalSetIterator = typename InternalSet::iterator;
 
     private:
-        class HashSetIterator : public MutatingIterator<T> {
+        class HashSetIterator : public Iterator<T> {
         private:
             InternalSetIterator _current;
             InternalSetIterator _end;
@@ -27,7 +27,6 @@ namespace ReLang {
             HashSetIterator(InternalSetIterator current, InternalSetIterator end, Bool isStarted, Bool isValid);
 
             virtual T getCurrent() override;
-            virtual void setCurrent(T value) override;
             virtual Bool moveNext() override;
             virtual Ptr<Iterator<T>> clone() override;
         };
@@ -43,7 +42,6 @@ namespace ReLang {
 
         virtual Ptr<Iterable<T>> getSelf() override;
         virtual Ptr<Iterator<T>> getIterator() override;
-        virtual Ptr<MutatingIterator<T>> getMutatingIterator() override;
         virtual Bool contains(T value) override;
         virtual Bool getIsEmpty() override;
         virtual Bool getHasLength() override;
@@ -117,12 +115,6 @@ namespace ReLang {
 
     template<typename T>
     inline Ptr<Iterator<T>> HashSet<T>::getIterator() {
-        return makePtr<HashSetIterator>(_set.begin(), _set.end(), false, false);
-    }
-
-
-    template<typename T>
-    inline Ptr<MutatingIterator<T>> HashSet<T>::getMutatingIterator() {
         return makePtr<HashSetIterator>(_set.begin(), _set.end(), false, false);
     }
 
@@ -247,12 +239,6 @@ namespace ReLang {
         } else {
             throw InvalidIteratorError();
         }
-    }
-
-
-    template<typename T>
-    inline void HashSet<T>::HashSetIterator::setCurrent(T value) {
-        throw NotSupportedError(L"Iterator for HashSet doesn't support method .setCurrent()");
     }
 
 

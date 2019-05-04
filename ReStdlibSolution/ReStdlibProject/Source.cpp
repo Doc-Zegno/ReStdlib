@@ -206,6 +206,8 @@ int main() {
 
         auto map = makePtr<HashMap<Int, Int>>({ Tuple<Int, Int>(1, 2), Tuple<Int, Int>(3, 4), Tuple<Int, Int>(5, 6) });
         printAll(L"Map:", map);
+		printAll(L"Map.keys:", map->getKeys());
+		printAll(L"Map.values:", map->getValues());
 
         print(list->get(10));
     } catch (IndexError& e) {

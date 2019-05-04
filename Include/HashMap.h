@@ -15,7 +15,7 @@ namespace ReLang {
         using InternalMapIterator = typename InternalMap::iterator;
 
     private:
-        class HashMapIterator : public MutatingIterator<Tuple<Key, Value>> {
+        class HashMapIterator : public Iterator<Tuple<Key, Value>> {
         private:
             InternalMapIterator _current;
             InternalMapIterator _end;
@@ -26,7 +26,6 @@ namespace ReLang {
             HashMapIterator(InternalMapIterator current, InternalMapIterator end, Bool isStarted, Bool isValid);
 
             virtual Tuple<Key, Value> getCurrent() override;
-            virtual void setCurrent(Tuple<Key, Value> pair) override;
             virtual Bool moveNext() override;
             virtual Ptr<Iterator<Tuple<Key, Value>>> clone() override;
         };
@@ -42,21 +41,32 @@ namespace ReLang {
 
         virtual Ptr<Iterable<Tuple<Key, Value>>> getSelf() override;
         virtual Ptr<Iterator<Tuple<Key, Value>>> getIterator() override;
-        virtual Ptr<MutatingIterator<Tuple<Key, Value>>> getMutatingIterator() override;
         virtual Bool contains(Tuple<Key, Value> value) override;
         virtual Bool getIsEmpty() override;
         virtual Bool getHasLength() override;
         virtual Int getLength() override;
 
         virtual Value get(Key key) override;
-        virtual Ptr<Set<Key>> getKeys() override;
-        virtual Ptr<Iterable<Value>> getValues() override;
         virtual Bool containsKey(Key key) override;
         virtual void set(Key key, Value value) override;
         virtual void remove(Key key) override;
         virtual void clear() override;
         virtual Ptr<Map<Key, Value>> getMapSelf() override;
     };
+
+
+
+	// G l o b a l   f u n c t i o n s
+	template<typename Key, typename Value, typename ...TArgs>
+	inline Ptr<HashMap<Key, Value>> makeMap(TArgs&& ...args) {
+		return makePtr<HashMap<Key, Value>>(std::forward<TArgs>(args)...);
+	}
+
+
+	template<typename Key, typename Value>
+	inline Ptr<HashMap<Key, Value>> makeMap(std::initializer_list<Tuple<Key, Value>> list) {
+		return makePtr<HashMap<Key, Value>>(list);
+	}
 
 
 
@@ -112,12 +122,6 @@ namespace ReLang {
 
 
     template<typename Key, typename Value>
-    inline Ptr<MutatingIterator<Tuple<Key, Value>>> HashMap<Key, Value>::getMutatingIterator() {
-        return makePtr<HashMapIterator>(_map.begin(), _map.end(), false, false);
-    }
-
-
-    template<typename Key, typename Value>
     inline Bool HashMap<Key, Value>::contains(Tuple<Key, Value> value) {
         auto key = value.getFirst();
         auto it = _map.find(key);
@@ -156,20 +160,6 @@ namespace ReLang {
         } else {
             throw KeyError();
         }
-    }
-
-
-    template<typename Key, typename Value>
-    inline Ptr<Set<Key>> HashMap<Key, Value>::getKeys() {
-        // TODO: implement
-        throw NotImplementedError();
-    }
-
-
-    template<typename Key, typename Value>
-    inline Ptr<Iterable<Value>> HashMap<Key, Value>::getValues() {
-        // TODO: implement
-        throw NotImplementedError();
     }
 
 
@@ -219,12 +209,6 @@ namespace ReLang {
         } else {
             throw InvalidIteratorError();
         }
-    }
-
-
-    template<typename Key, typename Value>
-    inline void HashMap<Key, Value>::HashMapIterator::setCurrent(Tuple<Key, Value> pair) {
-        throw NotSupportedError(L"Iterator for HashMap doesn't support method .setCurrent()");
     }
 
 

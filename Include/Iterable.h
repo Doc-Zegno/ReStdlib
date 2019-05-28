@@ -20,7 +20,7 @@ namespace ReLang {
 
 
     template<typename T>
-    class IterableCommon : public Any, public SelfReferencing<Iterable<T>> {
+    class IterableCommon : public virtual Any, public SelfReferencing<Iterable<T>> {
     private:
         Tuple<T, Int> supremeWith(Ptr<Function<Bool, T, T>> comparator);
 
@@ -43,13 +43,13 @@ namespace ReLang {
 
         virtual Bool contains(T value);
 
-        template<Int dummy = 0>
+        template<int dummy = 0>
         Ptr<Iterable<Tuple<Int, T>>> enumerate();
 
         template<typename R>
         Ptr<Iterable<R>> map(Ptr<Function<R, T>> mapping);
 
-        template<Int dummy = 0>
+        template<int dummy = 0>
         Ptr<Iterable<T>> filter(Ptr<Function<Bool, T>> predicate);
 
         virtual void forEach(Ptr<Function<Void, T>> action);
@@ -60,7 +60,7 @@ namespace ReLang {
 
         virtual Ptr<Iterable<T>> skip(Int number);
 
-        template<Int dummy = 0>
+        template<int dummy = 0>
         Ptr<Iterable<T>> sort(Bool isAscending = Bool(true));
 
         template<typename K>
@@ -74,10 +74,10 @@ namespace ReLang {
         template<typename K>
         Tuple<T, Int> minBy(Ptr<Function<K, T>> key);
 
-        template<Int dummy = 0>
+        template<int dummy = 0>
         Tuple<T, Int> max();
 
-        template<Int dummy = 0>
+        template<int dummy = 0>
         Tuple<T, Int> min();
 
         virtual Ptr<Iterable<T>> cons(T value);
@@ -88,13 +88,13 @@ namespace ReLang {
         template<typename R, typename Rs>
         Ptr<Iterable<R>> flatMap(Ptr<Function<Rs, T>> mapping);
 
-        template<Int dummy = 0>
+        template<int dummy = 0>
         Ptr<Iterable<Tuple<T, T>>> groupBy2();
 
-        template<Int dummy = 0>
+        template<int dummy = 0>
         Ptr<Iterable<Tuple<T, T>>> chainBy2();
 
-        virtual Ptr<String> toString() override;
+        virtual Ptr<String> toString(Bool isEscaped = false) override;
     };
 
 
@@ -475,6 +475,35 @@ namespace ReLang {
             virtual Int getLength() override;
             virtual Ptr<Iterable<Tuple<T, T>>> getSelf() override;
         };
+
+
+
+		template<typename Value, typename Boxed>
+		class BoxingIterable : public Iterable<Boxed>, public EnableSelf<BoxingIterable<Value, Boxed>> {
+		private:
+			class BoxingIterator : public Iterator<Boxed> {
+			private:
+				Ptr<Iterator<Value>> _iterator;
+
+			public:
+				BoxingIterator(Ptr<Iterator<Value>> iterator);
+
+				virtual Boxed getCurrent() override;
+				virtual Bool moveNext() override;
+				virtual Ptr<Iterator<Boxed>> clone() override;
+			};
+
+
+			Ptr<Iterable<Value>> _iterable;
+
+		public:
+			BoxingIterable(Ptr<Iterable<Value>> iterable);
+
+			virtual Ptr<Iterator<Boxed>> getIterator() override;
+			virtual Bool getHasLength() override;
+			virtual Int getLength() override;
+			virtual Ptr<Iterable<Boxed>> getSelf() override;
+		};
 
 
 
@@ -1275,13 +1304,69 @@ namespace ReLang {
         inline Ptr<Iterator<Tuple<T, T>>> ChainingIterable<T>::ChainingIterator::clone() {
             return Ptr<Iterator<Tuple<T, T>>>(new ChainingIterator(_iterator->clone(), _previous, _next, _isValid));
         }
-    }
+
+
+
+		// B o x i n g I t e r a b l e
+		template<typename Value, typename Boxed>
+		inline BoxingIterable<Value, Boxed>::BoxingIterable(Ptr<Iterable<Value>> iterable) : _iterable(iterable) {
+		}
+
+
+		template<typename Value, typename Boxed>
+		inline Ptr<Iterator<Boxed>> BoxingIterable<Value, Boxed>::getIterator() {
+			return Ptr<Iterator<Boxed>>(new BoxingIterator(_iterable->getIterator()));
+		}
+
+
+		template<typename Value, typename Boxed>
+		inline Bool BoxingIterable<Value, Boxed>::getHasLength() {
+			return _iterable->getHasLength();
+		}
+
+
+		template<typename Value, typename Boxed>
+		inline Int BoxingIterable<Value, Boxed>::getLength() {
+			return _iterable->getLength();
+		}
+
+
+		template<typename Value, typename Boxed>
+		inline Ptr<Iterable<Boxed>> BoxingIterable<Value, Boxed>::getSelf() {
+			return this->shared_from_this();
+		}
+
+
+
+		// B o x i n g I t e r a t o r
+		template<typename Value, typename Boxed>
+		inline BoxingIterable<Value, Boxed>::BoxingIterator::BoxingIterator(Ptr<Iterator<Value>> iterator) : _iterator(iterator) {
+		}
+
+
+		template<typename Value, typename Boxed>
+		inline Boxed BoxingIterable<Value, Boxed>::BoxingIterator::getCurrent() {
+			return box(_iterator->getCurrent());
+		}
+
+
+		template<typename Value, typename Boxed>
+		inline Bool BoxingIterable<Value, Boxed>::BoxingIterator::moveNext() {
+			return _iterator->moveNext();
+		}
+
+
+		template<typename Value, typename Boxed>
+		inline Ptr<Iterator<Boxed>> BoxingIterable<Value, Boxed>::BoxingIterator::clone() {
+			return Ptr<Iterator<Boxed>>(new BoxingIterator(_iterator->clone()));
+		}
+	}
 
 
 
     // I t e r a b l e C o m m o n
     template<typename T>
-    template<Int dummy>
+    template<int dummy>
     inline Ptr<Iterable<Tuple<Int, T>>> IterableCommon<T>::enumerate() {
         return Ptr<Iterable<Tuple<Int, T>>>(new Iterables::EnumeratingIterable<T>(this->getSelf()));
     }
@@ -1296,7 +1381,7 @@ namespace ReLang {
 
 
     template<typename T>
-    template<Int dummy>
+    template<int dummy>
     inline Ptr<Iterable<T>> IterableCommon<T>::filter(Ptr<Function<Bool, T>> predicate) {
         return Ptr<Iterable<T>>(
             new Iterables::FilterIterable<T>(this->getSelf(), predicate));
@@ -1304,7 +1389,7 @@ namespace ReLang {
 
 
     template<typename T>
-    template<Int dummy>
+    template<int dummy>
     inline Ptr<Iterable<T>> IterableCommon<T>::sort(Bool isAscending) {
         if (isAscending) {
             return sortWith(Ptr<Function<Bool, T, T>>(new Utils::AscendingComparator<T>()));
@@ -1340,14 +1425,14 @@ namespace ReLang {
 
 
     template<typename T>
-    template<Int dummy>
+    template<int dummy>
     inline Tuple<T, Int> IterableCommon<T>::max() {
         return supremeWith(Ptr<Function<Bool, T, T>>(new Utils::AscendingComparator<T>()));
     }
 
 
     template<typename T>
-    template<Int dummy>
+    template<int dummy>
     inline Tuple<T, Int> IterableCommon<T>::min() {
         return supremeWith(Ptr<Function<Bool, T, T>>(new Utils::DescendingComparator<T>()));
     }
@@ -1369,14 +1454,14 @@ namespace ReLang {
 
 
     template<typename T>
-    template<Int dummy>
+    template<int dummy>
     inline Ptr<Iterable<Tuple<T, T>>> IterableCommon<T>::groupBy2() {
         return Ptr<Iterable<Tuple<T, T>>>(new Iterables::GroupingIterable<T>(this->getSelf()));
     }
 
 
     template<typename T>
-    template<Int dummy>
+    template<int dummy>
     inline Ptr<Iterable<Tuple<T, T>>> IterableCommon<T>::chainBy2() {
         return Ptr<Iterable<Tuple<T, T>>>(new Iterables::ChainingIterable<T>(this->getSelf()));
     }
@@ -1526,6 +1611,16 @@ namespace ReLang {
         auto vIterable = Ptr<Iterable<V>>(vs);
         return Ptr<Iterable<Tuple<U, V>>>(new Iterables::ZippingIterable<U, V>(uIterable, vIterable));
     }
+
+
+	template<typename Ts>
+	auto boxIterable(Ptr<Ts> ts) -> Ptr<Iterable<decltype(box(ts->getIterator()->getCurrent()))>> {
+		using T = decltype(ts->getIterator()->getCurrent());
+		using Boxed = decltype(box(ts->getIterator()->getCurrent()));
+
+		auto iterable = Ptr<Iterable<T>>(ts);
+		return Ptr<Iterable<Boxed>>(new Iterables::BoxingIterable<T, Boxed>(iterable));
+	}
 }
 
 
@@ -1563,7 +1658,7 @@ namespace ReLang {
 
 
     template<typename T>
-    inline Ptr<String> IterableCommon<T>::toString() {
+    inline Ptr<String> IterableCommon<T>::toString(Bool isEscaped) {
         return Utils::join(L"::", this->getSelf(), L"", L"::[]");
     }
 }

@@ -15,6 +15,6 @@ namespace ReLang {
 
         virtual Ptr<String> getMessage();
 
-        virtual Ptr<String> toString() override;
+        virtual Ptr<String> toString(Bool isEscaped = false) override;
     };
 }

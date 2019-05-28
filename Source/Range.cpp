@@ -164,7 +164,7 @@ namespace ReLang {
     }
 
 
-    Ptr<String> Range::toString() {
+    Ptr<String> Range::toString(Bool isEscaped) {
         auto representation =
             std::wstring(L"Range(start=")
             + std::to_wstring(_start)

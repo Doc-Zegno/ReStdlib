@@ -2,6 +2,7 @@
 #include "CppUnitTest.h"
 
 #include "BasicString.h"
+#include "BoxedPrimitives.h"
 #include "ArrayList.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -131,6 +132,12 @@ namespace UnitTestProject {
             Assert::IsTrue(numbers->contains(Int(10)));
             Assert::IsFalse(numbers->contains(Int(11)));
         }
+
+
+		TEST_METHOD(BoxIterable) {
+			auto numbers = makeList({ 1, 2, 3, 4, 5 });
+			Assert::AreEqual(L"1::2::3::4::5::[]", boxIterable(numbers)->toString()->getRaw().c_str());
+		}
 
 
         TEST_METHOD(Mutations) {

@@ -64,10 +64,10 @@ namespace UnitTestProject {
             auto ys = makePtr<ArrayList<Int>>({ 1, 2, 3, 4, 6 });
             auto zs = makePtr<ArrayList<Int>>({ 1, 2, 3, 4, 5, 6 });
             auto ws = makePtr<ArrayList<Int>>({ 1, 2, 3, 4, 5 });
-            Assert::IsTrue((*xs) == xs);
-            Assert::IsFalse((*xs) == ys);
-            Assert::IsFalse((*xs) == zs);
-            Assert::IsTrue((*xs) == ws);
+            Assert::IsTrue(xs == xs);
+            Assert::IsFalse(xs == ys);
+            Assert::IsFalse(xs == zs);
+            Assert::IsTrue(xs == ws);
 		}
 
 

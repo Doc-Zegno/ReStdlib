@@ -8,7 +8,7 @@
 
 namespace ReLang {
     template<typename Key, typename Value>
-    class Map : public virtual Iterable<Tuple<Key, Value>>, public Equatable<Map<Key, Value>> {
+    class Map : public virtual Iterable<Tuple<Key, Value>>, public virtual Equatable<Map<Key, Value>> {
     public:
         virtual Value get(Key key) = 0;
         virtual Ptr<Set<Key>> getKeys();
@@ -17,7 +17,7 @@ namespace ReLang {
         virtual Ptr<Map<Key, Value>> getMapSelf() = 0;
 
         virtual Bool operator==(Ptr<Map<Key, Value>> other) override;
-        virtual Ptr<String> toString() override;
+        virtual Ptr<String> toString(Bool isEscaped = false) override;
     };
 
 
@@ -280,7 +280,7 @@ namespace ReLang {
 
 
     template<typename Key, typename Value>
-    inline Ptr<String> Map<Key, Value>::toString() {
+    inline Ptr<String> Map<Key, Value>::toString(Bool isEscaped) {
         return Utils::joinPairs(L", ", this->getSelf(), L"{", L"}");
     }
 }

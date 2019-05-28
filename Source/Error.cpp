@@ -16,7 +16,7 @@ namespace ReLang {
     }
 
 
-    Ptr<String> Error::toString() {
+    Ptr<String> Error::toString(Bool isEscaped) {
         return _message;
     }
 }

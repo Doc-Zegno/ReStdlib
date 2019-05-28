@@ -12,7 +12,7 @@ namespace ReLang {
         template<typename T>
         Bool iterableEquals(Ptr<Iterable<T>> ts1, Ptr<Iterable<T>> ts2) {
             if (ts1 && ts2) {
-                if (ts1 == ts2) {
+                if (ts1.get() == ts2.get()) {
                     return true;
                 }
 

@@ -4,10 +4,11 @@
 #include <iostream>
 
 #include "List.h"
+#include "Comparable.h"
 
 
 namespace ReLang {
-    class String : public List<Char>, public EnableSelf<String>, public Equatable<String> {
+    class String : public virtual List<Char>, public EnableSelf<String>, public virtual Comparable<String> {
     private:
         std::wstring _raw;
 
@@ -46,7 +47,19 @@ namespace ReLang {
 
         virtual Bool operator==(Ptr<String> other) override;
 
-        virtual Ptr<String> toString() override;
+		virtual Bool operator!=(Ptr<String> other) override;
+
+		virtual Bool operator>(Ptr<String> other) override;
+
+		virtual Bool operator<(Ptr<String> other) override;
+
+		virtual Bool operator>=(Ptr<String> other) override;
+
+		virtual Bool operator<=(Ptr<String> other) override;
+
+		virtual Int compareTo(Ptr<String> other) override;
+
+        virtual Ptr<String> toString(Bool isEscaped = false) override;
 
         Char operator[](Int index);
 
@@ -55,4 +68,12 @@ namespace ReLang {
 
 
     std::wostream& operator<<(std::wostream& out, Ptr<String> string);
+
+
+	
+	// G l o b a l    f u n c t i o n s
+	template<typename ...TArgs>
+	inline Ptr<String> makeStr(TArgs&& ...args) {
+		return makePtr<String>(std::forward<TArgs>(args)...);
+	}
 }

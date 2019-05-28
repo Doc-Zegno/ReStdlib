@@ -27,7 +27,7 @@ namespace ReLang {
 
         template<typename T>
         void appendToBuilder(std::wostringstream& builder, Ptr<T> value) {
-            auto any = std::static_pointer_cast<Any>(value);
+            auto any = staticPointerCast<Any>(value);
             appendToBuilder(builder, any);
         }
 

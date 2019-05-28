@@ -14,7 +14,7 @@ namespace ReLang {
 
         template<typename T>
         Bool equals(Ptr<T> t1, Ptr<T> t2) {
-            if (t1 == t2) {
+            if (t1.get() == t2.get()) {
                 return true;
             } else {
                 if (t1 && t2) {

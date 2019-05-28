@@ -128,6 +128,20 @@ namespace ReLang {
 
 
 namespace ReLang {
+	// G l o b a l    F u n c t i o n s
+	template<typename T, typename ...TArgs>
+	inline Ptr<ArrayList<T>> makeList(TArgs&& ...args) {
+		return makePtr<ArrayList<T>>(std::forward<TArgs>(args)...);
+	}
+
+
+	template<typename T>
+	inline Ptr<ArrayList<T>> makeList(std::initializer_list<T> list) {
+		return makePtr<ArrayList<T>>(list);
+	}
+
+
+
     // A r r a y L i s t
     template<typename T>
     inline ArrayList<T>::ArrayList() : _vector() {

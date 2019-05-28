@@ -18,13 +18,13 @@ namespace ReLang {
         virtual void clear() = 0;
         virtual void resize(Int size, T value = T()) = 0;
 
-        virtual Ptr<String> toString() override;
+        virtual Ptr<String> toString(Bool isEscaped = false) override;
     };
 
 
 
     template<typename T>
-    inline Ptr<String> MutableList<T>::toString() {
-        return List<T>::toString();
+    inline Ptr<String> MutableList<T>::toString(Bool isEscaped) {
+        return List<T>::toString(isEscaped);
     }
 }

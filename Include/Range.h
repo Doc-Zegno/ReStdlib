@@ -31,6 +31,6 @@ namespace ReLang {
         virtual Bool getHasLength() override;
         virtual Int getLength() override;
         virtual Ptr<Iterable<Int>> getSelf() override;
-        virtual Ptr<String> toString() override;
+        virtual Ptr<String> toString(Bool isEscaped = false) override;
     };
 }

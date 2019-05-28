@@ -18,7 +18,7 @@ namespace ReLang {
 
     template<typename T>
     void print(Ptr<T> t, const Char* end = L"\n") {
-        auto ptr = std::static_pointer_cast<Any>(t);
+        auto ptr = staticPointerCast<Any>(t);
         print(ptr, end);
     }
 

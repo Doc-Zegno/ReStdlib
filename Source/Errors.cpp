@@ -78,4 +78,12 @@ namespace ReLang {
         : Error(message ? message : makePtr<String>(L"No such key"))
     {
     }
+
+
+	ZeroDivisionError::ZeroDivisionError() : Error(makePtr<String>(L"Division by zero")) {
+	}
+
+
+	NullError::NullError() : Error(makePtr<String>(L"Trying to dereference null pointer")) {
+	}
 }

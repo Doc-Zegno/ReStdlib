@@ -50,4 +50,16 @@ namespace ReLang {
         KeyError(const Char* message);
         KeyError(Ptr<String> message = Ptr<String>());
     };
+
+
+	class ZeroDivisionError : public Error {
+	public:
+		ZeroDivisionError();
+	};
+
+
+	class NullError : public Error {
+	public:
+		NullError();
+	};
 }

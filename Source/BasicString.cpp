@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include <algorithm>
+#include <cstring>
 
 #include "Errors.h"
 #include "Range.h"
@@ -178,8 +179,67 @@ namespace ReLang {
     }
 
 
-    Ptr<String> String::toString() {
-        return this->shared_from_this();
+	Bool String::operator!=(Ptr<String> other) {
+		if (other) {
+			return _raw != other->_raw;
+		} else {
+			return false;
+		}
+	}
+
+
+	Bool String::operator>(Ptr<String> other) {
+		if (other) {
+			return _raw > other->_raw;
+		} else {
+			return false;
+		}
+	}
+
+
+	Bool String::operator<(Ptr<String> other) {
+		if (other) {
+			return _raw < other->_raw;
+		} else {
+			return false;
+		}
+	}
+
+
+	Bool String::operator>=(Ptr<String> other) {
+		if (other) {
+			return _raw >= other->_raw;
+		} else {
+			return false;
+		}
+	}
+
+
+	Bool String::operator<=(Ptr<String> other) {
+		if (other) {
+			return _raw <= other->_raw;
+		} else {
+			return false;
+		}
+	}
+
+
+	Int String::compareTo(Ptr<String> other) {
+		if (other) {
+			return std::wcscmp(_raw.c_str(), other->_raw.c_str());
+		} else {
+			throw NullError();
+		}
+	}
+
+
+    Ptr<String> String::toString(Bool isEscaped) {
+		if (isEscaped) {
+			// TODO: insert code for string escaping
+			throw NotImplementedError();
+		} else {
+			return this->shared_from_this();
+		}
     }
 
 

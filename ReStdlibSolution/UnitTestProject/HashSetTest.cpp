@@ -32,16 +32,17 @@ namespace UnitTestProject {
             // Equality
             auto copy1 = makeSet<Int>({ 1, 2, 3, 4, 5 });
             auto copy2 = makeSet<Int>(set);
-            Assert::IsTrue((*set) == copy1);
-            Assert::IsTrue((*set) == copy2);
-            Assert::IsFalse((*set) == empty);
-            Assert::IsFalse((*set) == makeSet<Int>({ 1, 2, 3, 4, 7 }));
+            Assert::IsTrue(set == copy1);
+            Assert::IsTrue(set == copy2);
+            Assert::IsFalse(set == empty);
+            Assert::IsFalse(set == makeSet<Int>({ 1, 2, 3, 4, 7 }));
 
             // Union/intersection/difference
             auto other = makeSet<Int>({ 1, 3, 5, 7, 9 });
-            Assert::IsTrue(*(set->unioned(other)) == makeSet<Int>({ 1, 2, 3, 4, 5, 7, 9 }));
-            Assert::IsTrue(*(set->intersection(other)) == makeSet<Int>({ 1, 3, 5 }));
-            Assert::IsTrue(*(set->difference(other)) == makeSet<Int>({ 2, 4 }));
+			Logger::WriteMessage(set->unioned(other)->toString()->getRaw().c_str());
+            Assert::IsTrue(set->unioned(other) == makeSet<Int>({ 1, 2, 3, 4, 5, 7, 9 }));
+            Assert::IsTrue(set->intersection(other) == makeSet<Int>({ 1, 3, 5 }));
+            Assert::IsTrue(set->difference(other) == makeSet<Int>({ 2, 4 }));
         }
 
 
@@ -50,19 +51,19 @@ namespace UnitTestProject {
 
             // Add
             set->add(Int(6));
-            Assert::IsTrue((*set) == makeSet<Int>({ 1, 2, 3, 4, 5, 6 }));
+            Assert::IsTrue(set == makeSet<Int>({ 1, 2, 3, 4, 5, 6 }));
 
             // AddAll
             set->addAll(makeSet<Int>({ 7, 8, 9 }));
-            Assert::IsTrue((*set) == makeSet<Int>({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
+            Assert::IsTrue(set == makeSet<Int>({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
 
             // Remove
             set->remove(Int(1));
-            Assert::IsTrue((*set) == makeSet<Int>({ 2, 3, 4, 5, 6, 7, 8, 9 }));
+            Assert::IsTrue(set == makeSet<Int>({ 2, 3, 4, 5, 6, 7, 8, 9 }));
 
             // RemoveAll
             set->removeAll(makeSet<Int>({ 3, 5, 7, 9 }));
-            Assert::IsTrue((*set) == makeSet<Int>({ 2, 4, 6, 8 }));
+            Assert::IsTrue(set == makeSet<Int>({ 2, 4, 6, 8 }));
 
             // Clear
             set->clear();

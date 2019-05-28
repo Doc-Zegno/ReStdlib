@@ -7,7 +7,7 @@
 
 namespace ReLang {
     template<typename T>
-    class Iterator : public Any, public Cloneable<Iterator<T>> {
+    class Iterator : public virtual Any, public virtual Cloneable<Iterator<T>> {
     public:
         virtual T getCurrent() = 0;
         virtual Bool moveNext() = 0;

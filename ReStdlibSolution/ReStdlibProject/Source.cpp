@@ -8,6 +8,7 @@
 #include "Range.h"
 #include "BasicString.h"
 #include "Print.h"
+#include "BoxedPrimitives.h"
 
 using namespace ReLang;
 
@@ -183,10 +184,10 @@ int main() {
         auto ys = makePtr<ArrayList<Int>>({ 1, 2, 3, 4, 6 });
         auto zs = makePtr<ArrayList<Int>>({ 1, 2, 3, 4, 5, 6 });
         auto ws = makePtr<ArrayList<Int>>({ 1, 2, 3, 4, 5 });
-        printAll(L"xs == xs:", (*xs) == xs);
-        printAll(L"xs == ys:", (*xs) == ys);
-        printAll(L"xs == zs:", (*xs) == zs);
-        printAll(L"xs == ws:", (*xs) == ws);
+        printAll(L"xs == xs:", xs == xs);
+        printAll(L"xs == ys:", xs == ys);
+        printAll(L"xs == zs:", xs == zs);
+        printAll(L"xs == ws:", xs == ws);
 
         auto set = makePtr<HashSet<Int>>({ 1, 2, 3, 1, 2, 4, 5, 6, 6, 7, 4 });
         auto anotherSet = makePtr<HashSet<Int>>({ 1, 3, 5, 7, 9, 11 });
@@ -208,6 +209,9 @@ int main() {
         printAll(L"Map:", map);
 		printAll(L"Map.keys:", map->getKeys());
 		printAll(L"Map.values:", map->getValues());
+
+		printAll(L"Boxed numbers:", boxIterable(list));
+		std::wcout << list << std::endl;
 
         print(list->get(10));
     } catch (IndexError& e) {

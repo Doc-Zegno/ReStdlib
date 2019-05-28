@@ -35,12 +35,12 @@ namespace UnitTestProject {
 
 			// GetKeys
 			auto keys = map->getKeys();
-			Assert::IsTrue((*keys) == makeSet<Int>({ 0, 1, 2 }));
+			Assert::IsTrue(keys == makeSet<Int>({ 0, 1, 2 }));
 
 			// GetValues
 			auto values = map->getValues();
 			auto valuesSet = makeSet<Bool>(values);
-			Assert::IsTrue((*valuesSet) == makeSet<Bool>({ true, false }));
+			Assert::IsTrue(valuesSet == makeSet<Bool>({ true, false }));
 		}
 
 

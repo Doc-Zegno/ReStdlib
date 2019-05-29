@@ -11,6 +11,7 @@ namespace ReLang {
         virtual Ptr<Set<T>> unioned(Ptr<Iterable<T>> items) = 0;
         virtual Ptr<Set<T>> intersection(Ptr<Iterable<T>> items) = 0;
         virtual Ptr<Set<T>> difference(Ptr<Iterable<T>> items) = 0;
+		virtual Bool contains(T value) = 0;
 
         virtual Bool operator==(Ptr<Set<T>> other) override;
         virtual Ptr<String> toString(Bool isEscaped = false) override;

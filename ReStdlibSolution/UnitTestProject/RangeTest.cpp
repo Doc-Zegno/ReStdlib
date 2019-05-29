@@ -102,5 +102,25 @@ namespace UnitTestProject {
 			Assert::AreEqual(Bool(true), empty->getIsEmpty());
 			Assert::AreEqual(Int(0), empty->getLength());
 		}
+
+
+		TEST_METHOD(Contains) {
+			// Contiguous
+			for (auto i = 1; i <= 10; i++) {
+				Assert::IsTrue(numbers->contains(i));
+			}
+			Assert::IsFalse(numbers->contains(0));
+			Assert::IsFalse(numbers->contains(11));
+
+			// Sparse
+			auto each3 = staticPointerCast<Range>(numbers->getSlice(1, -1, 3));  // [2, 5, 8]
+			for (auto i = 2; i < 10; i += 3) {
+				Assert::IsTrue(each3->contains(i));
+				Assert::IsFalse(each3->contains(i + 1));
+				Assert::IsFalse(each3->contains(i + 2));
+			}
+			Assert::IsFalse(each3->contains(1));
+			Assert::IsFalse(each3->contains(11));
+		}
     };
 }

@@ -250,6 +250,11 @@ namespace ReLang {
     }
 
 
+	Bool String::contains(Ptr<String> substring) {
+		return _raw.find(substring->getRaw()) != std::string::npos;
+	}
+
+
     const std::wstring& String::getRaw() const {
         return _raw;
     }

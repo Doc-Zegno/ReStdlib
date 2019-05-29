@@ -41,7 +41,8 @@ namespace ReLang {
 
         virtual Ptr<Iterable<Int>> getIndices();
 
-        virtual Bool contains(T value);
+		// TODO: remove this
+        //virtual Bool contains(T value);
 
         template<int dummy = 0>
         Ptr<Iterable<Tuple<Int, T>>> enumerate();
@@ -1650,11 +1651,12 @@ namespace ReLang {
     }
 
 
-    template<typename T>
+	// TODO: remove this
+    /*template<typename T>
     inline Bool IterableCommon<T>::contains(T value) {
         auto iterator = getIterator();
         return Utils::contains(iterator, value);
-    }
+    }*/
 
 
     template<typename T>

@@ -86,8 +86,21 @@ namespace UnitTestProject {
 		}
 
 
+		TEST_METHOD(Contains) {
+			Assert::IsTrue(string->contains(makeStr(L"Sample")));
+			Assert::IsTrue(string->contains(makeStr(L"text")));
+			Assert::IsTrue(string->contains(makeStr(L"ple te")));
+			Assert::IsTrue(string->contains(makeStr(L"a")));
+
+			Assert::IsFalse(string->contains(makeStr(L"Hello")));
+			Assert::IsFalse(string->contains(makeStr(L"b")));
+
+			Assert::IsFalse(empty->contains(makeStr(L"world")));
+			Assert::IsFalse(empty->contains(makeStr(L"z")));
+		}
+
+
 		TEST_METHOD(ComparableFunctionality) {
-			auto string = makeStr(L"Sample text");
 			Assert::IsTrue(string == string);
 			Assert::IsTrue(string == makeStr(L"Sample text"));
 			Assert::IsTrue(string != makeStr(L"Sample texz"));
@@ -101,7 +114,6 @@ namespace UnitTestProject {
 
 
 		TEST_METHOD(SliceBasicFunctionality) {
-			auto string = makeStr(L"Sample text");
 			auto slice = string->getSlice(1, -2, 3);
 			Assert::AreEqual(L"alt", slice->toString()->getRaw().c_str());
 		}

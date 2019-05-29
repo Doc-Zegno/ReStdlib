@@ -33,6 +33,17 @@ namespace UnitTestProject {
 
 
 		TEST_METHOD(Contains) {
+			Assert::IsTrue(map->contains(Tuple<Int, Bool>(1, false)));
+
+			// Wrong value
+			Assert::IsFalse(map->contains(Tuple<Int, Bool>(1, true)));
+
+			// Wrong key
+			Assert::IsFalse(map->contains(Tuple<Int, Bool>(3, false)));
+		}
+
+
+		TEST_METHOD(ContainsKey) {
 			Assert::IsTrue(map->containsKey(0));
 			Assert::IsFalse(map->containsKey(-1));
 		}

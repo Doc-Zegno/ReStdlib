@@ -13,6 +13,7 @@ namespace ReLang {
         virtual Value get(Key key) = 0;
         virtual Ptr<Set<Key>> getKeys();
         virtual Ptr<Iterable<Value>> getValues();
+		virtual Bool contains(Tuple<Key, Value> value) = 0;
         virtual Bool containsKey(Key key) = 0;
         virtual Ptr<Map<Key, Value>> getMapSelf() = 0;
 

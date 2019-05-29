@@ -70,6 +70,16 @@ namespace ReLang {
     }
 
 
+	Bool Range::contains(Int value) {
+		if (value >= _start && value < _end) {
+			auto unbiased = value - _start;
+			return unbiased % _step == 0;
+		} else {
+			return false;
+		}
+	}
+
+
     Ptr<Iterator<Int>> Range::getIterator() {
         return Ptr<Iterator<Int>>(new RangeIterator(_start - _step, _end, _step));
     }

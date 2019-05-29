@@ -63,6 +63,8 @@ namespace ReLang {
 
         Char operator[](Int index);
 
+		Bool contains(Ptr<String> substring);
+
         const std::wstring& getRaw() const;
     };
 

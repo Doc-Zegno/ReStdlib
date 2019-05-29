@@ -17,6 +17,7 @@ namespace ReLang {
         Int getStart();
         Int getEnd();
         Int getStep();
+		Bool contains(Int value);
 
         virtual Ptr<Iterator<Int>> getIterator() override;
         virtual Int get(Int index) override;

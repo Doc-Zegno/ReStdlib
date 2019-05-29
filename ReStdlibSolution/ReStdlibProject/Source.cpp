@@ -213,6 +213,8 @@ int main() {
 		printAll(L"Boxed numbers:", boxIterable(list));
 		std::wcout << list << std::endl;
 
+		auto function = makeFunc<SumTwoIntsReducer>();
+
         print(list->get(10));
     } catch (IndexError& e) {
         print(e.getMessage());

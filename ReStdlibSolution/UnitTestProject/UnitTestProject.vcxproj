@@ -164,6 +164,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ArrayListSliceTest.cpp" />
     <ClCompile Include="BasicStringTest.cpp" />
     <ClCompile Include="HashMapTest.cpp" />
     <ClCompile Include="HashSetTest.cpp" />

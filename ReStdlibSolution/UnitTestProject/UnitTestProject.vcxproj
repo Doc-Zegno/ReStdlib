@@ -103,7 +103,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>..\ReStdlibProject\Debug\Any.obj;..\ReStdlibProject\Debug\Range.obj;..\ReStdlibProject\Debug\BasicString.obj;..\ReStdlibProject\Debug\Error.obj;..\ReStdlibProject\Debug\Errors.obj;..\ReStdlibProject\Debug\Print.obj;..\ReStdlibProject\Debug\IterableUtils.obj;..\ReStdlibProject\Debug\StringUtils.obj;..\ReStdlibProject\Debug\Primitives.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\ReStdlibProject\Debug\Any.obj;..\ReStdlibProject\Debug\Range.obj;..\ReStdlibProject\Debug\BasicString.obj;..\ReStdlibProject\Debug\Error.obj;..\ReStdlibProject\Debug\Errors.obj;..\ReStdlibProject\Debug\Print.obj;..\ReStdlibProject\Debug\IterableUtils.obj;..\ReStdlibProject\Debug\StringUtils.obj;..\ReStdlibProject\Debug\Primitives.obj;..\ReStdlibProject\Debug\Builder.obj;..\ReStdlibProject\Debug\Escape.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -118,7 +118,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>..\ReStdlibProject\Debug\Any.obj;..\ReStdlibProject\Debug\Range.obj;..\ReStdlibProject\Debug\BasicString.obj;..\ReStdlibProject\Debug\Error.obj;..\ReStdlibProject\Debug\Errors.obj;..\ReStdlibProject\Debug\Print.obj;..\ReStdlibProject\Debug\IterableUtils.obj;..\ReStdlibProject\Debug\StringUtils.obj;..\ReStdlibProject\Debug\Primitives.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\ReStdlibProject\Debug\Any.obj;..\ReStdlibProject\Debug\Range.obj;..\ReStdlibProject\Debug\BasicString.obj;..\ReStdlibProject\Debug\Error.obj;..\ReStdlibProject\Debug\Errors.obj;..\ReStdlibProject\Debug\Print.obj;..\ReStdlibProject\Debug\IterableUtils.obj;..\ReStdlibProject\Debug\StringUtils.obj;..\ReStdlibProject\Debug\Primitives.obj;..\ReStdlibProject\Debug\Builder.obj;..\ReStdlibProject\Debug\Escape.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -137,7 +137,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>..\ReStdlibProject\Debug\Any.obj;..\ReStdlibProject\Debug\Range.obj;..\ReStdlibProject\Debug\BasicString.obj;..\ReStdlibProject\Debug\Error.obj;..\ReStdlibProject\Debug\Errors.obj;..\ReStdlibProject\Debug\Print.obj;..\ReStdlibProject\Debug\IterableUtils.obj;..\ReStdlibProject\Debug\StringUtils.obj;..\ReStdlibProject\Debug\Primitives.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\ReStdlibProject\Debug\Any.obj;..\ReStdlibProject\Debug\Range.obj;..\ReStdlibProject\Debug\BasicString.obj;..\ReStdlibProject\Debug\Error.obj;..\ReStdlibProject\Debug\Errors.obj;..\ReStdlibProject\Debug\Print.obj;..\ReStdlibProject\Debug\IterableUtils.obj;..\ReStdlibProject\Debug\StringUtils.obj;..\ReStdlibProject\Debug\Primitives.obj;..\ReStdlibProject\Debug\Builder.obj;..\ReStdlibProject\Debug\Escape.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -156,7 +156,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>..\ReStdlibProject\Debug\Any.obj;..\ReStdlibProject\Debug\Range.obj;..\ReStdlibProject\Debug\BasicString.obj;..\ReStdlibProject\Debug\Error.obj;..\ReStdlibProject\Debug\Errors.obj;..\ReStdlibProject\Debug\Print.obj;..\ReStdlibProject\Debug\IterableUtils.obj;..\ReStdlibProject\Debug\StringUtils.obj;..\ReStdlibProject\Debug\Primitives.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\ReStdlibProject\Debug\Any.obj;..\ReStdlibProject\Debug\Range.obj;..\ReStdlibProject\Debug\BasicString.obj;..\ReStdlibProject\Debug\Error.obj;..\ReStdlibProject\Debug\Errors.obj;..\ReStdlibProject\Debug\Print.obj;..\ReStdlibProject\Debug\IterableUtils.obj;..\ReStdlibProject\Debug\StringUtils.obj;..\ReStdlibProject\Debug\Primitives.obj;..\ReStdlibProject\Debug\Builder.obj;..\ReStdlibProject\Debug\Escape.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -178,6 +178,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ArrayListTest.cpp" />
+    <ClCompile Include="StringUtilsTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ReStdlibProject\ReStdlibProject.vcxproj">

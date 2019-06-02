@@ -133,6 +133,8 @@
     <ClCompile Include="..\..\Source\Primitives.cpp" />
     <ClCompile Include="..\..\Source\Print.cpp" />
     <ClCompile Include="..\..\Source\Range.cpp" />
+    <ClCompile Include="..\..\Source\Utils\Builder.cpp" />
+    <ClCompile Include="..\..\Source\Utils\Escape.cpp" />
     <ClCompile Include="..\..\Source\Utils\IterableUtils.cpp" />
     <ClCompile Include="..\..\Source\Utils\StringUtils.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -166,9 +168,13 @@
     <ClInclude Include="..\..\Include\BasicString.h" />
     <ClInclude Include="..\..\Include\Set.h" />
     <ClInclude Include="..\..\Include\Tuple.h" />
+    <ClInclude Include="..\..\Include\Utils\Builder.h" />
+    <ClInclude Include="..\..\Include\Utils\Escape.h" />
+    <ClInclude Include="..\..\Include\Utils\Format.h" />
     <ClInclude Include="..\..\Include\Utils\FunctionUtils.h" />
     <ClInclude Include="..\..\Include\Utils\HashUtils.h" />
     <ClInclude Include="..\..\Include\Utils\IterableUtils.h" />
+    <ClInclude Include="..\..\Include\Utils\Join.h" />
     <ClInclude Include="..\..\Include\Utils\OperatorUtils.h" />
     <ClInclude Include="..\..\Include\Utils\StringUtils.h" />
   </ItemGroup>

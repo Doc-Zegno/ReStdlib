@@ -137,7 +137,7 @@ int main() {
         auto mess = Ptr<ArrayList<Int>>(new ArrayList<Int>({ 3, 4, 1, 7, 2, 6, 5 }));
         auto messPairs = Ptr<ArrayList<Tuple<Ptr<String>, Int>>>(
             new ArrayList<Tuple<Ptr<String>, Int>>{
-                Tuple<Ptr<String>, Int>(makePtr<String>(L"Hello World"), 3),
+                Tuple<Ptr<String>, Int>(makePtr<String>(L"Hello World!"), 3),
                 Tuple<Ptr<String>, Int>(makePtr<String>(L"Sample Text"), 1),
                 Tuple<Ptr<String>, Int>(makePtr<String>(L"Serious Arguments"), 2),
             });
@@ -214,6 +214,8 @@ int main() {
 		std::wcout << list << std::endl;
 
 		auto function = makeFunc<SumTwoIntsReducer>();
+
+		printAll(L"String to list:", makeList<Char>(makeStr(L"What's up?")));
 
         print(list->get(10));
     } catch (IndexError& e) {

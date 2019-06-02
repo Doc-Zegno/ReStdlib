@@ -2,7 +2,9 @@
 
 #include <iostream>
 
+#include "Primitives.h"
 #include "Utils/OperatorUtils.h"
+#include "Utils/Format.h"
 
 
 namespace ReLang {
@@ -28,14 +30,16 @@ namespace ReLang {
             return Utils::equals(_t1, other._t1) && Utils::equals(_t2, other._t2);
         }
 
-        // TODO: implement .toString()
+		Ptr<String> toString(Bool isEscaped = false) {
+			return Utils::format(L'(', ReLang::toString(_t1, true), L", ", ReLang::toString(_t2, true), L')');
+		}
     };
 
 
     template<typename T1, typename T2>
     std::wostream& operator<<(std::wostream& out, Tuple<T1, T2> tuple) {
-        // TODO: replace with .toString() invocation
-        out << L'(' << tuple.getFirst() << L", " << tuple.getSecond() << L')';
+		auto representation = tuple.toString();
+		out << representation->getRaw();
         return out;
     }
 }

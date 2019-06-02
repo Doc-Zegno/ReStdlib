@@ -7,6 +7,7 @@
 #include "Errors.h"
 #include "Range.h"
 #include "Utils/IterableUtils.h"
+#include "Utils/Escape.h"
 
 
 namespace ReLang {
@@ -235,8 +236,17 @@ namespace ReLang {
 
     Ptr<String> String::toString(Bool isEscaped) {
 		if (isEscaped) {
-			// TODO: insert code for string escaping
-			throw NotImplementedError();
+			// Escape
+			auto ptr = Ptr<Char[]>(new Char[_raw.size() * 2U + 3]);
+			auto destination = ptr.get();
+			destination[0] = L'\"';
+			auto end = Utils::escapeString(_raw.c_str(), destination + 1);
+			*end = L'\"';
+			*(end + 1) = L'\0';
+
+			// Make raw
+			auto raw = std::wstring(destination, end - destination + 1);
+			return makeStr(std::move(raw));
 		} else {
 			return this->shared_from_this();
 		}

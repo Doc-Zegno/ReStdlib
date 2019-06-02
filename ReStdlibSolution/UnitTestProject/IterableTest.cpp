@@ -59,7 +59,7 @@ namespace UnitTestProject {
 			Assert::AreEqual(Bool(true), enumerate->getHasLength());
 			Assert::AreEqual(Int(4), enumerate->getLength());
 			Assert::AreEqual(Bool(false), enumerate->getIsEmpty());
-			Assert::AreEqual(L"(0, Hello, World!)::(1, null)::(2, Sample Text)::(3, Serious Arguments)::[]", enumerate->toString()->getRaw().c_str());
+			Assert::AreEqual(L"(0, \"Hello, World!\")::(1, null)::(2, \"Sample Text\")::(3, \"Serious Arguments\")::[]", enumerate->toString()->getRaw().c_str());
 		}
 
 
@@ -76,7 +76,7 @@ namespace UnitTestProject {
 			Assert::AreEqual(Bool(true), zipped->getHasLength());
 			Assert::AreEqual(Int(4), zipped->getLength());
 			Assert::AreEqual(Bool(false), zipped->getIsEmpty());
-			Assert::AreEqual(L"(Hello, World!, 1)::(null, 2)::(Sample Text, 3)::(Serious Arguments, 4)::[]", zipped->toString()->getRaw().c_str());
+			Assert::AreEqual(L"(\"Hello, World!\", 1)::(null, 2)::(\"Sample Text\", 3)::(\"Serious Arguments\", 4)::[]", zipped->toString()->getRaw().c_str());
 		}
 
 

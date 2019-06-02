@@ -35,7 +35,11 @@ namespace ReLang {
 	}
 
 
+	Ptr<String> makeNullStr();
 	Ptr<String> toString(Int value, Bool isEscaped = false);
+	Ptr<String> toString(Char value, Bool isEscaped = false);
+	Ptr<String> toString(Bool value, Bool isEscaped = false);
+	Ptr<String> toString(const Char* value, Bool isEscaped = false);
 
 
 	template<typename T>
@@ -46,7 +50,11 @@ namespace ReLang {
 
 	template<typename T>
 	inline Ptr<String> toString(Ptr<T> t, Bool isEscaped = false) {
-		return t->toString(isEscaped);
+		if (t) {
+			return t->toString(isEscaped);
+		} else {
+			return makeNullStr();
+		}
 	}
 
 

@@ -160,6 +160,7 @@
     <ClInclude Include="..\..\Include\MutableMap.h" />
     <ClInclude Include="..\..\Include\MutableSet.h" />
     <ClInclude Include="..\..\Include\MutatingIterator.h" />
+    <ClInclude Include="..\..\Include\Numeric.h" />
     <ClInclude Include="..\..\Include\Primitives.h" />
     <ClInclude Include="..\..\Include\Print.h" />
     <ClInclude Include="..\..\Include\Ptr.h" />

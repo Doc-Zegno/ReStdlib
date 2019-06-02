@@ -1,10 +1,11 @@
 #pragma once
 
 #include "Comparable.h"
+#include "Numeric.h"
 
 
 namespace ReLang {
-	class BoxedInt : public virtual Comparable<BoxedInt> {
+	class BoxedInt : public virtual Comparable<BoxedInt>, public virtual Numeric<BoxedInt> {
 	private:
 		Int _value;
 
@@ -12,15 +13,15 @@ namespace ReLang {
 		BoxedInt() : _value(0) {}
 		BoxedInt(Int value) : _value(value) {}
 
-		Ptr<BoxedInt> operator+(Ptr<BoxedInt> other) {
+		virtual Ptr<BoxedInt> operator+(Ptr<BoxedInt> other) override {
 			return makePtr<BoxedInt>(_value + other->_value);
 		}
 
-		Ptr<BoxedInt> operator-(Ptr<BoxedInt> other) {
+		virtual Ptr<BoxedInt> operator-(Ptr<BoxedInt> other) override {
 			return makePtr<BoxedInt>(_value - other->_value);
 		}
 
-		Ptr<BoxedInt> operator*(Ptr<BoxedInt> other) {
+		virtual Ptr<BoxedInt> operator*(Ptr<BoxedInt> other) override {
 			return makePtr<BoxedInt>(_value * other->_value);
 		}
 
@@ -77,6 +78,75 @@ namespace ReLang {
 	};
 
 
+	class BoxedFloat : public virtual Comparable<BoxedFloat>, public virtual Numeric<BoxedFloat> {
+	private:
+		Float _value;
+
+	public:
+		BoxedFloat() : _value(0.0) {}
+		BoxedFloat(Float value) : _value(value) {}
+
+		virtual Ptr<BoxedFloat> operator+(Ptr<BoxedFloat> other) override {
+			return makePtr<BoxedFloat>(_value + other->_value);
+		}
+
+		virtual Ptr<BoxedFloat> operator-(Ptr<BoxedFloat> other) override {
+			return makePtr<BoxedFloat>(_value - other->_value);
+		}
+
+		virtual Ptr<BoxedFloat> operator*(Ptr<BoxedFloat> other) override {
+			return makePtr<BoxedFloat>(_value * other->_value);
+		}
+
+		Ptr<BoxedFloat> operator/(Ptr<BoxedFloat> other) {
+			return makePtr<BoxedFloat>(_value / other->_value);
+		}
+
+		Float unbox() {
+			return _value;
+		}
+
+		virtual Ptr<String> toString(Bool isEscaped = false) override {
+			return ReLang::toString(_value, isEscaped);
+		}
+
+		virtual Bool operator==(Ptr<BoxedFloat> other) override {
+			return _value == other->_value;
+		}
+
+		virtual Bool operator!=(Ptr<BoxedFloat> other) override {
+			return _value != other->_value;
+		}
+
+		virtual Bool operator>(Ptr<BoxedFloat> other) override {
+			return _value > other->_value;
+		}
+
+		virtual Bool operator<(Ptr<BoxedFloat> other) override {
+			return _value < other->_value;
+		}
+
+		virtual Bool operator>=(Ptr<BoxedFloat> other) override {
+			return _value >= other->_value;
+		}
+
+		virtual Bool operator<=(Ptr<BoxedFloat> other) override {
+			return _value <= other->_value;
+		}
+
+		virtual Int compareTo(Ptr<BoxedFloat> other) override {
+			auto otherValue = other->_value;
+			if (_value > otherValue) {
+				return 1;
+			} else if (_value < otherValue) {
+				return -1;
+			} else {
+				return 0;
+			}
+		}
+	};
+
+
 	inline Ptr<BoxedInt> divide(Ptr<BoxedInt> x, Ptr<BoxedInt> y) {
 		return makePtr<BoxedInt>(divide(x->unbox(), y->unbox()));
 	}
@@ -87,8 +157,7 @@ namespace ReLang {
 	}
 
 
-	// TODO: reimplement with BoxedFloat
-	/*inline Ptr<BoxedInt> fdiv(Ptr<BoxedInt> x, Ptr<BoxedInt> y) {
-		return makePtr<BoxedInt>(fdiv(x->unbox(), y->unbox()));
-	}*/
+	inline Ptr<BoxedFloat> fdivide(Ptr<BoxedInt> x, Ptr<BoxedInt> y) {
+		return makePtr<BoxedFloat>(fdivide(x->unbox(), y->unbox()));
+	}
 }

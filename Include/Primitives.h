@@ -16,6 +16,7 @@ namespace ReLang {
 
 
 	class BoxedInt;
+	class BoxedFloat;
 
 
 	Int divide(Int x, Int y);
@@ -27,6 +28,7 @@ namespace ReLang {
 
 
 	Ptr<BoxedInt> box(Int value);
+	Ptr<BoxedFloat> box(Float value);
 
 
 	template<typename Value>
@@ -37,6 +39,7 @@ namespace ReLang {
 
 	Ptr<String> makeNullStr();
 	Ptr<String> toString(Int value, Bool isEscaped = false);
+	Ptr<String> toString(Float value, Bool isEscaped = false);
 	Ptr<String> toString(Char value, Bool isEscaped = false);
 	Ptr<String> toString(Bool value, Bool isEscaped = false);
 	Ptr<String> toString(const Char* value, Bool isEscaped = false);
@@ -58,5 +61,12 @@ namespace ReLang {
 	}
 
 
-	int compareTo(Int x, Int y);
+	Int compareTo(Int x, Int y);
+	Int compareTo(Float x, Float y);
+
+
+	template<typename T>
+	inline Int compareTo(Ptr<T> x, Ptr<T> y) {
+		return x->compareTo(y);
+	}
 }

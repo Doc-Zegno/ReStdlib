@@ -12,6 +12,16 @@ using namespace ReLang;
 
 namespace UnitTestProject {
 	TEST_CLASS(PrimitivesTest) {
+	private:
+		Bool almostEqual(Float x, Float y) {
+			return std::abs(x - y) < 1.0e-10;
+		}
+
+		Bool almostEqual(Ptr<BoxedFloat> x, Ptr<BoxedFloat> y) {
+			return almostEqual(x->unbox(), y->unbox());
+		}
+
+
 	public:
 		TEST_METHOD(IntFunctionality) {
 			// Representation
@@ -31,10 +41,23 @@ namespace UnitTestProject {
 			};
 			Assert::ExpectException<ZeroDivisionError>(test2);
 
+			// Float division
+			Assert::IsTrue(almostEqual(5.0, fdivide(125, 25)));
+
 			// Ñomparable
 			Assert::AreEqual(1, compareTo(5, 4));
 			Assert::AreEqual(-1, compareTo(4, 5));
 			Assert::AreEqual(0, compareTo(5, 5));
+		}
+
+
+		TEST_METHOD(FloatFunctionality) {
+			// Representation
+			//Assert::AreEqual(L"-137.42", toString(-137.42)->getRaw().c_str());
+
+			// Comparable
+			Assert::AreEqual(1, compareTo(5.0, 4.0));
+			Assert::AreEqual(-1, compareTo(4.0, 5.0));
 		}
 
 
@@ -57,9 +80,9 @@ namespace UnitTestProject {
 			Assert::IsTrue(box(5) <= box(6));
 
 			// Comparable (compareTo)
-			Assert::AreEqual(1, compareTo(5, 4));
-			Assert::AreEqual(-1, compareTo(4, 5));
-			Assert::AreEqual(0, compareTo(5, 5));
+			Assert::AreEqual(1, compareTo(box(5), box(4)));
+			Assert::AreEqual(-1, compareTo(box(4), box(5)));
+			Assert::AreEqual(0, compareTo(box(5), box(5)));
 
 			// Arithmetic
 			Assert::IsTrue(box(5) == box(2) + box(3));
@@ -67,6 +90,9 @@ namespace UnitTestProject {
 			Assert::IsTrue(box(10) == box(5) * box(2));
 			Assert::IsTrue(box(5) == box(125) / box(25));
 			Assert::IsTrue(box(5) == box(12) % box(7));
+
+			// Float division
+			Assert::IsTrue(almostEqual(box(5.0), fdivide(box(125), box(25))));
 			
 			// Checked arithmetic
 			Assert::IsTrue(box(5) == divide(box(125), box(25)));
@@ -79,6 +105,34 @@ namespace UnitTestProject {
 				modulo(box(5), box(0));
 			};
 			Assert::ExpectException<ZeroDivisionError>(test2);
+		}
+
+
+		TEST_METHOD(BoxedFloatFunctionality) {
+			auto number = 137.42;
+			auto boxed = box(number);
+
+			// Boxing
+			Assert::IsTrue(almostEqual(number, boxed->unbox()));
+
+			// Representation
+			//Assert::AreEqual(L"137.42", boxed->toString()->getRaw().c_str());
+
+			// Comparable (operators)
+			Assert::IsTrue(box(5.0) > box(4.0));
+			Assert::IsFalse(box(5.0) < box(4.0));
+			Assert::IsTrue(box(5.0) >= box(4.0));
+			Assert::IsFalse(box(5.0) <= box(4.0));
+
+			// Comparable (compareTo)
+			Assert::AreEqual(1, compareTo(box(5.0), box(4.0)));
+			Assert::AreEqual(-1, compareTo(box(4.0), box(5.0)));
+
+			// Arithmetic
+			Assert::IsTrue(almostEqual(box(5.0), box(2.0) + box(3.0)));
+			Assert::IsTrue(almostEqual(box(5.0), box(8.0) - box(3.0)));
+			Assert::IsTrue(almostEqual(box(10.0), box(5.0) * box(2.0)));
+			Assert::IsTrue(almostEqual(box(5.0), box(125.0) / box(25.0)));
 		}
 	};
 }

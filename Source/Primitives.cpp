@@ -28,12 +28,23 @@ namespace ReLang {
 	}
 
 
+	Ptr<BoxedFloat> box(Float value) {
+		return makePtr<BoxedFloat>(value);
+	}
+
+
 	Ptr<String> makeNullStr() {
 		return Ptr<String>();
 	}
 
 
 	Ptr<String> toString(Int value, Bool isEscaped) {
+		auto raw = std::to_wstring(value);
+		return makePtr<String>(std::move(raw));
+	}
+
+
+	Ptr<String> toString(Float value, Bool isEscaped) {
 		auto raw = std::to_wstring(value);
 		return makePtr<String>(std::move(raw));
 	}
@@ -70,6 +81,17 @@ namespace ReLang {
 
 
 	int compareTo(Int x, Int y) {
+		if (x < y) {
+			return -1;
+		} else if (x > y) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+
+
+	Int compareTo(Float x, Float y) {
 		if (x < y) {
 			return -1;
 		} else if (x > y) {

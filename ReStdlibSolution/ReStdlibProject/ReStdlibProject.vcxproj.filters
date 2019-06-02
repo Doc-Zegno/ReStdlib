@@ -135,6 +135,9 @@
     <ClInclude Include="..\..\Include\Utils\Escape.h">
       <Filter>Файлы заголовков\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Include\Numeric.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">

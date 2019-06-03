@@ -147,6 +147,77 @@ namespace ReLang {
 	};
 
 
+	class BoxedChar : public virtual Comparable<BoxedChar> {
+	private:
+		Char _value;
+
+	public:
+		BoxedChar() : _value(L'\0') {}
+		BoxedChar(Char value) : _value(value) {}
+
+		Char unbox() {
+			return _value;
+		}
+
+		virtual Ptr<String> toString(Bool isEscaped = false) override {
+			return ReLang::toString(_value, isEscaped);
+		}
+
+		virtual Bool operator==(Ptr<BoxedChar> other) override {
+			return _value == other->_value;
+		}
+
+		virtual Bool operator!=(Ptr<BoxedChar> other) override {
+			return _value != other->_value;
+		}
+
+		virtual Bool operator>(Ptr<BoxedChar> other) override {
+			return _value > other->_value;
+		}
+
+		virtual Bool operator<(Ptr<BoxedChar> other) override {
+			return _value < other->_value;
+		}
+
+		virtual Bool operator>=(Ptr<BoxedChar> other) override {
+			return _value >= other->_value;
+		}
+
+		virtual Bool operator<=(Ptr<BoxedChar> other) override {
+			return _value <= other->_value;
+		}
+
+		virtual Int compareTo(Ptr<BoxedChar> other) override {
+			auto otherValue = other->_value;
+			if (_value > otherValue) {
+				return 1;
+			} else if (_value < otherValue) {
+				return -1;
+			} else {
+				return 0;
+			}
+		}
+	};
+
+
+	class BoxedBool : public virtual Any {
+	private:
+		Bool _value;
+
+	public:
+		BoxedBool() : _value(false) {}
+		BoxedBool(Bool value) : _value(value) {}
+
+		Bool unbox() {
+			return _value;
+		}
+
+		virtual Ptr<String> toString(Bool isEscaped = false) override {
+			return ReLang::toString(_value, isEscaped);
+		}
+	};
+
+
 	inline Ptr<BoxedInt> divide(Ptr<BoxedInt> x, Ptr<BoxedInt> y) {
 		return makePtr<BoxedInt>(divide(x->unbox(), y->unbox()));
 	}

@@ -33,6 +33,16 @@ namespace ReLang {
 	}
 
 
+	Ptr<BoxedBool> box(Bool value) {
+		return makePtr<BoxedBool>(value);
+	}
+
+
+	Ptr<BoxedChar> box(Char value) {
+		return makePtr<BoxedChar>(value);
+	}
+
+
 	Ptr<String> makeNullStr() {
 		return Ptr<String>();
 	}
@@ -92,6 +102,17 @@ namespace ReLang {
 
 
 	Int compareTo(Float x, Float y) {
+		if (x < y) {
+			return -1;
+		} else if (x > y) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+
+
+	Int compareTo(Char x, Char y) {
 		if (x < y) {
 			return -1;
 		} else if (x > y) {

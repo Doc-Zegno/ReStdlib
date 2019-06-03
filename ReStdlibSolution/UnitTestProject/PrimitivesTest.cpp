@@ -61,6 +61,25 @@ namespace UnitTestProject {
 		}
 
 
+		TEST_METHOD(CharFunctionality) {
+			// Representation
+			Assert::AreEqual(L"A", toString(L'A')->getRaw().c_str());
+			Assert::AreEqual(L"'\\n'", toString(L'\n', true)->getRaw().c_str());
+
+			// Comparable
+			Assert::AreEqual(1, compareTo(L'B', L'A'));
+			Assert::AreEqual(-1, compareTo(L'A', L'B'));
+			Assert::AreEqual(0, compareTo(L'A', L'A'));
+		}
+
+
+		TEST_METHOD(BoolFunctionality) {
+			// Representation
+			Assert::AreEqual(L"true", toString(true)->getRaw().c_str());
+			Assert::AreEqual(L"false", toString(false)->getRaw().c_str());
+		}
+
+
 		TEST_METHOD(BoxedIntFunctionality) {
 			auto number = 137;
 			auto boxed = box(number);
@@ -133,6 +152,40 @@ namespace UnitTestProject {
 			Assert::IsTrue(almostEqual(box(5.0), box(8.0) - box(3.0)));
 			Assert::IsTrue(almostEqual(box(10.0), box(5.0) * box(2.0)));
 			Assert::IsTrue(almostEqual(box(5.0), box(125.0) / box(25.0)));
+		}
+
+
+		TEST_METHOD(BoxedCharFunctionality) {
+			// Boxing
+			Assert::AreEqual(L'A', box(L'A')->unbox());
+
+			// Representation
+			Assert::AreEqual(L"A", toString(box(L'A'))->getRaw().c_str());
+			Assert::AreEqual(L"'\\n'", toString(box(L'\n'), true)->getRaw().c_str());
+
+			// Comparable (operators)
+			Assert::IsTrue(box(L'B') > box(L'A'));
+			Assert::IsFalse(box(L'B') < box(L'A'));
+			Assert::IsTrue(box(L'B') >= box(L'A'));
+			Assert::IsFalse(box(L'B') <= box(L'A'));
+			Assert::IsTrue(box(L'A') == box(L'A'));
+			Assert::IsFalse(box(L'A') != box(L'A'));
+
+			// Comparable (compareTo)
+			Assert::AreEqual(1, compareTo(box(L'B'), box(L'A')));
+			Assert::AreEqual(-1, compareTo(box(L'A'), box(L'B')));
+			Assert::AreEqual(0, compareTo(box(L'A'), box(L'A')));
+		}
+
+
+		TEST_METHOD(BoxedBoolFunctionality) {
+			// Boxing
+			Assert::AreEqual(true, box(true)->unbox());
+			Assert::AreEqual(false, box(false)->unbox());
+
+			// Representation
+			Assert::AreEqual(L"true", box(true)->toString()->getRaw().c_str());
+			Assert::AreEqual(L"false", box(false)->toString()->getRaw().c_str());
 		}
 	};
 }

@@ -314,6 +314,15 @@ namespace ReLang {
             Ptr<ConstructingNode<T>> next;
 
             ConstructingNode(T value, Ptr<ConstructingNode<T>> next = Ptr<ConstructingNode<T>>()) : value(value), next(next) {}
+
+			~ConstructingNode() {
+				auto node = this;
+				auto next = Ptr<ConstructingNode<T>>();
+				do {
+					next = std::move(node->next);
+					node = next.get();
+				} while (node != nullptr);
+			}
         };
 
 

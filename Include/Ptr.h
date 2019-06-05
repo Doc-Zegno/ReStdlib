@@ -57,6 +57,7 @@ namespace ReLang {
 
 	template<typename U, typename V>
 	bool operator==(Ptr<U> x, Ptr<V> y) {
+		// TODO: maybe you should add null checks
 		// Propagation through Ptr<T> to instance of Equatable<T>
 		// WARNING: reference equality of Ptr's is not valid anymore!
 		std::wcout << "<!> Equality test! Serious business! <!>\n";

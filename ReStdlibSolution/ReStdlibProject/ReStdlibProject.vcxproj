@@ -143,6 +143,7 @@
     <ClInclude Include="..\..\Include\Any.h" />
     <ClInclude Include="..\..\Include\ArrayList.h" />
     <ClInclude Include="..\..\Include\BoxedPrimitives.h" />
+    <ClInclude Include="..\..\Include\BoxedTuple.h" />
     <ClInclude Include="..\..\Include\Cloneable.h" />
     <ClInclude Include="..\..\Include\Comparable.h" />
     <ClInclude Include="..\..\Include\Equatable.h" />

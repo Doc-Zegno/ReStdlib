@@ -26,10 +26,12 @@ namespace ReLang {
             return _t2;
         }
 
+		template<Int dummy = 0>
         Bool operator==(Tuple<T1, T2> other) {
             return Utils::equals(_t1, other._t1) && Utils::equals(_t2, other._t2);
         }
 
+		template<Int dummy = 0>
 		Bool operator!=(Tuple<T1, T2> other) {
 			return !Utils::equals(_t1, other._t1) || !Utils::equals(_t2, other._t2);
 		}

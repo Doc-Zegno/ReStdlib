@@ -180,6 +180,7 @@
     <ClCompile Include="ArrayListTest.cpp" />
     <ClCompile Include="StringUtilsTest.cpp" />
     <ClCompile Include="TupleTest.cpp" />
+    <ClCompile Include="UpcastTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ReStdlibProject\ReStdlibProject.vcxproj">

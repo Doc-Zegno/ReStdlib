@@ -74,4 +74,32 @@ namespace ReLang {
 	inline Int compareTo(Ptr<T> x, Ptr<T> y) {
 		return x->compareTo(y);
 	}
+
+
+	/*template<typename T>
+	T upcast(Int value) = delete;
+
+
+	template<>
+	Int upcast<Int>(Int value) {
+		return value;
+	}
+
+
+	template<>
+	Ptr<BoxedInt> upcast<Ptr<BoxedInt>>(Int value) {
+		return box(value);
+	}
+
+
+	template<>
+	Ptr<Any> upcast<Ptr<Any>>(Int value) {
+		return box(value);
+	}*/
+
+
+	/*template<typename E, typename F>
+	auto upcast(F f) -> typename std::enable_if<!std::is_same<E, F>::value && !IsPtr<E>::value == IsPtr<F>::value, E>::type {
+		return f;
+	}*/
 }

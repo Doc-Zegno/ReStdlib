@@ -170,6 +170,7 @@
     <ClInclude Include="..\..\Include\BasicString.h" />
     <ClInclude Include="..\..\Include\Set.h" />
     <ClInclude Include="..\..\Include\Tuple.h" />
+    <ClInclude Include="..\..\Include\Upcast.h" />
     <ClInclude Include="..\..\Include\Utils\Builder.h" />
     <ClInclude Include="..\..\Include\Utils\Escape.h" />
     <ClInclude Include="..\..\Include\Utils\Format.h" />

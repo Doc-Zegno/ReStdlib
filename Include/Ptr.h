@@ -153,4 +153,12 @@ namespace ReLang {
 		std::wcout << "<!> Modulo! Serious business! <!>\n";
 		return (*x) % y;
 	}
+
+	
+	template<typename T>
+	struct IsPtr : std::false_type {};
+
+
+	template<typename T>
+	struct IsPtr<Ptr<T>> : std::true_type {};
 }

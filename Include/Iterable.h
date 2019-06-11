@@ -25,6 +25,8 @@ namespace ReLang {
         Tuple<T, Int> supremeWith(Ptr<Function<Bool, T, T>> comparator);
 
     public:
+		using ItemType = T;
+
         virtual Ptr<Iterator<T>> getIterator() = 0;
 
         virtual T getFirst();
@@ -96,6 +98,12 @@ namespace ReLang {
         Ptr<Iterable<Tuple<T, T>>> chainBy2();
 
         virtual Ptr<String> toString(Bool isEscaped = false) override;
+
+		template<typename U>
+		static Ptr<Iterable<T>> upcast(Ptr<Iterable<U>> us);
+
+		template<typename U>
+		static Ptr<Iterable<T>> upcast(Ptr<U> us);
     };
 
 
@@ -1475,6 +1483,30 @@ namespace ReLang {
     inline Ptr<Iterable<Tuple<T, T>>> IterableCommon<T>::chainBy2() {
         return Ptr<Iterable<Tuple<T, T>>>(new Iterables::ChainingIterable<T>(this->getSelf()));
     }
+
+
+	template<typename T>
+	template<typename U>
+	inline Ptr<Iterable<T>> IterableCommon<T>::upcast(Ptr<Iterable<U>> us) {
+		class Caster : public Function<T, U> {
+		public:
+			virtual T operator()(U u) override {
+				return ReLang::upcast<T>(u);
+			}
+		};
+
+		return us->map(makeFunc<Caster>());
+	}
+
+
+	template<typename T>
+	template<typename U>
+	inline Ptr<Iterable<T>> IterableCommon<T>::upcast(Ptr<U> us) {
+		using F = typename U::ItemType;
+
+		auto iterable = staticPointerCast<Iterable<F>>(us);
+		return Iterable<T>::upcast(iterable);
+	}
 
 
     template<typename T>

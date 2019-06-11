@@ -1,6 +1,8 @@
 #include <iostream>
+#include <functional>
 #include <conio.h>
 
+#include "Function.h"
 #include "Errors.h"
 #include "ArrayList.h"
 #include "HashSet.h"
@@ -10,6 +12,7 @@
 #include "Print.h"
 #include "BoxedPrimitives.h"
 #include "BoxedTuple.h"
+#include "Upcast.h"
 
 using namespace ReLang;
 
@@ -68,6 +71,99 @@ public:
         return x.getSecond();
     }
 };
+
+
+/*template<typename E>
+Ptr<Iterable<E>> asIterable(Ptr<Iterable<E>> es) {
+	return es;
+}
+
+
+template<typename E, typename F>
+Ptr<Iterable<E>> asIterable(Ptr<Iterable<F>> fs) {
+	class Caster : public Function<E, F> {
+	public:
+		virtual E operator()(F f) override {
+			return staticPointerCast<E::element_type>(f);
+		}
+	};
+
+	return fs->map(makeFunc<Caster>());
+}*/
+
+
+/*template<typename E>
+class Converter {
+public:
+	template<typename F>
+	Ptr<Iterable<F>> convert(Ptr<Iterable<F>> fs) {
+		class Caster : public Function<E, F> {
+		public:
+			virtual E operator()(F f) override {
+				return upcast<E>(f);
+			}
+		};
+
+		return fs->map(makeFunc<Caster>());
+	}
+
+
+	Ptr<Iterable<E>> convert(Ptr<Iterable<E>> es) {
+		return es;
+	}
+};
+
+
+template<typename E>
+Ptr<Iterable<E>> asIterable2(Ptr<Iterable<E>> es) {
+	return es;
+}
+
+
+template<typename E, typename F>
+auto asIterable2(Ptr<Iterable<F>> fs) -> typename std::enable_if<!std::is_same<E, F>::value, Ptr<Iterable<E>>>::type {
+	class Caster : public Function<E, F> {
+	public:
+		virtual E operator()(F f) override {
+			return upcast<E>(f);
+		}
+	};
+
+	return fs->map(makeFunc<Caster>());
+}
+
+
+template<typename E, typename TypeFrom>
+Ptr<Iterable<E>> asIterable(Ptr<TypeFrom> from) {
+	using F = typename TypeFrom::ElementType;
+
+	auto iterable = staticPointerCast<Iterable<F>>(from);
+	return asIterable2<E>(iterable);
+}*/
+
+
+
+Int cube(Int value) {
+	return value * value * value;
+}
+
+
+Ptr<String> getRepresentation(Ptr<Any> value) {
+	return value->toString();
+}
+
+
+/*template<typename T>
+auto box2(T t) -> typename std::enable_if<std::is_function<decltype(t)>::value, decltype(boxFunction(t))>::type {
+	return boxFunction(t);
+}*/
+
+
+/*template<typename T, typename ...Args>
+auto box2(T t(Args...)) -> Ptr<Function<T, Args...>> {
+	return box(t);
+}*/
+
 
 
 int main() {
@@ -222,6 +318,20 @@ int main() {
 		for (auto i = 2; i < 100000; i++) {
 			sof = sof->cons(i);
 		}
+
+		auto it = upcastPtr<Iterable<Ptr<Any>>>(makeList({ 1, 3, 7 }));
+		printAll("[Int] as Any* :", it);
+
+		auto cov = upcastPtr<Iterable<Ptr<Iterable<Ptr<Any>>>>>(makeList({ makeList({ 1, 2, 3 }), makeList({ 4, 5, 6 }) }));
+		printAll("[[Int]] as Any** :", cov);
+
+		auto cubed = xs->map(upcast<Ptr<Function<Ptr<Any>, Int>>>(getRepresentation));
+		printAll("Vanilla function pointer as functional object:", cubed);
+
+		//auto func = std::function<Int(Int)>(cube);
+		//auto boxedFunc = box2(cube);
+
+		//std::is_function<decltype(cube)>::value;
 
         print(list->get(10));
     } catch (IndexError& e) {
